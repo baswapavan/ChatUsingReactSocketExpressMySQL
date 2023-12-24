@@ -8,5 +8,5 @@ jobs:
       - run: cd socket/
       - run: npm install
       - run: node --version
-      - run: nodemon .\index.js
-      - run: nodemon .\express.js  
+      - run: node .\index.js
+      - run: node .\express.js  
