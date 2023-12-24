@@ -9,6 +9,6 @@ jobs:
       - run: npm install
       - run: node --version
       - run: pwd
-      - run: cd .\socket\
-      - run: node .\index.js
-      - run: node .\express.js  
+      - run: cd ~/socket
+      - run: node index.js
+      - run: node express.js  
