@@ -5,12 +5,13 @@ jobs:
     container: node:18
     steps:
       - uses: actions/checkout@v3
-      - run: ls -ltr
-      - run: cd socket
-      - run: ls -ltr
-      - run: npm install
-      - run: node --version
-      - run: pwd
-      - run: ls -ltr
-      - run: node socket/index.js
-      - run: node socket/express.js  
+      - run: |
+          ls -ltr
+          cd socket
+          ls -ltr
+          npm install
+          node --version
+          pwd
+          ls -ltr
+          node socket/index.js
+          node socket/express.js  
