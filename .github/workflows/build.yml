@@ -1,0 +1,13 @@
+on: push
+jobs:
+  build-node:
+    runs-on: ubuntu-latest
+    container: node:18
+    steps:
+      - run: node -- version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: cd socket/
+      - run: npm install
+      - run: nodemon socket/index.js
+      - run: nodemon socket/express.js  
