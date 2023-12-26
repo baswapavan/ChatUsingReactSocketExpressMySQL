@@ -6,12 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          ls -ltr
           cd socket
-          ls -ltr
           npm install
           node --version
           pwd
-          ls -ltr
           node index.js
-           node express.js  
+          node express.js  
