@@ -13,5 +13,5 @@ jobs:
           node --version
           pwd
           ls -ltr
-          node socket/index.js
-          node socket/express.js  
+          node index.js
+          node express.js  
