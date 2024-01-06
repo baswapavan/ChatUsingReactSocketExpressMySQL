@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { addUser } from './Library';
+import { addUser, roles } from './Library';
 
 
 function SignUp(props) {
@@ -12,7 +12,9 @@ function SignUp(props) {
   const [profileImage, setProfileImage] = useState('');
   const [timezone, setTimezone] = useState('');
   const [about, setAbout] = useState('');
+  const [role, setRole] = useState('');
   const [createNewUser, setCreateNewUser] = useState(null);
+  const [rolesDataIn, setRolesDataIn] = useState()
 
 
   useEffect(() => {
@@ -22,7 +24,7 @@ function SignUp(props) {
 
   const handleSignUp = () => {
     try {
-      addUser({ loggedin_userid, username, password, email, fullname, profileImage, timezone, about })
+      addUser({ loggedin_userid, username, password, email, fullname, profileImage, timezone, about, role })
       setCreateNewUser('success');
 
     }
@@ -30,9 +32,17 @@ function SignUp(props) {
       setCreateNewUser('success');
     }
   }
-  // const handleChatLogin = () => {
-  //   props.setSignUp(false);
+
+  // const handleRolesGet = () => {
+  //   roles((roles) => {
+  //     setRolesData(roles);
+  //   });
   // }
+
+  const handleRolesGet = () => {
+    props.rolesData &&
+      setRolesDataIn(props.rolesData);
+  }
 
   return (
     <>
@@ -56,6 +66,22 @@ function SignUp(props) {
               onChange={(e) => setTimezone(e.target.value)} className='form-control m-2 p-2' placeholder='Time zone'></input>
             <input type="text" value={about}
               onChange={(e) => setAbout(e.target.value)} className='form-control m-2 p-2' placeholder='About'></input>
+            {/* <input type="text" value={role}
+              onChange={(e) => setRole(e.target.value)} className='form-control m-2 p-2' placeholder='Role'></input> */}
+            <select
+              className='form-select m-2 p-2'
+              value={role}
+              onClick={handleRolesGet}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="" disabled selected>Select a role</option>
+              {rolesDataIn && rolesDataIn.map((_) => (
+                <option key={_.role_id} value={_.role_id}>
+                  {_.role}
+                </option>
+              ))}
+            </select>
+
           </form>
         </div>
         <div>

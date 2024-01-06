@@ -24,7 +24,7 @@ export const addChatUser = (socket, user) => {
   });
 };
 
-export const addUser = ({ loggedin_userid, username, password, email, fullname, profileImage, timezone, about }) => {
+export const addUser = ({ loggedin_userid, username, password, email, fullname, profileImage, timezone, about, role }) => {
   fetch(APIServerURL + '/user', {
     method: 'POST'
     , body: JSON.stringify({
@@ -36,6 +36,7 @@ export const addUser = ({ loggedin_userid, username, password, email, fullname, 
       , 'profileImage': profileImage
       , 'time_zone': timezone
       , 'about': about
+      , 'role_id': role
     })
     , headers: {
       "Content-Type": "application/json"
@@ -91,14 +92,12 @@ export const users = ({ user_id }, call_back) => {
     }
   }).then(response => response.json())
     .then(json => {
-      // console.log('API calling')
-      // console.log(json)
       call_back(json[0]);
     })
 }
 
 ///////////////////////
-export const updateUser = ({ loggedin_userid, user_name, password, email, full_name, time_zone, about }, call_back) => {
+export const updateUser = ({ loggedin_userid, user_name, password, email, full_name, time_zone, about, role_id, is_active }, call_back) => {
   fetch(APIServerURL + '/updateUser', {
     method: 'PUT'
     , body: JSON.stringify({
@@ -109,6 +108,8 @@ export const updateUser = ({ loggedin_userid, user_name, password, email, full_n
       , 'full_name': full_name
       , 'time_zone': time_zone
       , 'about': about
+      , 'role_id': role_id
+      , 'is_active': is_active
     })
     , headers: {
       "Content-Type": "application/json"
@@ -119,7 +120,59 @@ export const updateUser = ({ loggedin_userid, user_name, password, email, full_n
 
     })
 }
-//////////////////////
+
+export const roles = (call_back) => {
+  fetch(APIServerURL + `/roles`, {
+    method: 'GET'
+    , headers: {
+      "Contant-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json[0])
+    })
+}
+
+export const createRole = ({ role_id, role, description }, call_back) => {
+  fetch(APIServerURL + `/role?role=${role}&description=${description}`, {
+    method: 'POST'
+    // , body: JSON.stringify({
+    //   " role_id": role_id,
+    //   "role": role,
+    //   "description": description
+    // })
+    , headers: {
+      "Contant-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json)
+    })
+}
+
+export const updateRole = ({ role_id, role, description }, call_back) => {
+  fetch(APIServerURL + `/role?role_id=${role_id}&role=${role}&description=${description}`, {
+    method: 'PUT'
+    , headers: {
+      "Contant-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json)
+    })
+}
+
+export const deleteRole = ({ role_id }, call_back) => {
+  fetch(APIServerURL + `/role?role_id=${role_id}`, {
+    method: 'DELETE'
+    , headers: {
+      "Contant-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json)
+    })
+}
 
 export const conversationInfoGet = ({ conversation_id }, call_back) => {
   fetch(APIServerURL + `/conversation?conversation_id=${conversation_id}`, {
@@ -135,8 +188,8 @@ export const conversationInfoGet = ({ conversation_id }, call_back) => {
     })
 }
 
-export const conversationNonMembersGet = ({ conversation_id }, call_back) => {
-  fetch(APIServerURL + `/conversation/nonmembers?conversation_id=${conversation_id}`, {
+export const conversationNonMembersGet = ({ conversation_id, user_id }, call_back) => {
+  fetch(APIServerURL + `/conversation/nonmembers?conversation_id=${conversation_id}&user_id=${user_id}`, {
     method: 'GET'
     , headers: {
       "Content-Type": "application/json"
@@ -148,6 +201,9 @@ export const conversationNonMembersGet = ({ conversation_id }, call_back) => {
       call_back(json[0]);
     })
 }
+
+
+
 export const addConversation = ({ conversationid, senderid, receiverid, contenttype, content, parentmessageid, reactions, mentions, forwardedfromconversationid, attachments, isedited }) => {
   fetch(APIServerURL + '/conversation/messages', {
     method: 'POST'
@@ -169,7 +225,6 @@ export const addConversation = ({ conversationid, senderid, receiverid, contentt
     }
   }).then(response => response.json())
     .then(json => {
-      // console.log(json);
 
     })
 }

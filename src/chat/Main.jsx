@@ -3,7 +3,10 @@ import ChatList from "./ChatList";
 import SendMessage from "./SendMessage";
 import { GVContext } from './Login';
 import SignUp from './SignUp';
+import Users from './Users';
+import threedots from './three-dots.png';
 import { conversationsGet, getChatUser, conversationWithMembersAdd, users, updateUser, conversationToDelete } from './Library';
+import Roles from './Roles';
 
 function Main(props) {
   const { GV, setGV } = useContext(GVContext);
@@ -24,10 +27,12 @@ function Main(props) {
   const [fullname, setFullname] = useState();
   const [timezone, setTimezone] = useState();
   const [about, setAbout] = useState();
-  const [signUp, setSignUp] = useState(false);
   const [editMode, isEditMode] = useState(false);
   const [conversationId, setConversationId] = useState();
-
+  const [showUsers, setShowUsers] = useState(true);
+  const [isDropdownVisable, setIsDropdownVisable] = useState(false);
+  const [showRoles, setShowRoles] = useState(true);
+  const [activeMenu, setActiveMenu] = useState('chat');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,7 +62,7 @@ function Main(props) {
     try {
       await updateUser(
         {
-          user_id: GV.loggedInUser.user_id,
+          loggedin_userid: GV.loggedInUser.user_id,
           user_name: GV.loggedInUser.username,
           password: password,
           email: email,
@@ -166,9 +171,9 @@ function Main(props) {
     }
   };
 
-  const handleChatSignup = () => {
-    setSignUp(true);
-  }
+  // const handleChatSignup = () => {
+  //   setSignUp(true);
+  // }
 
   const handleEditClick = () => {
     isEditMode(true);
@@ -180,6 +185,23 @@ function Main(props) {
     });
   }
 
+  // const handleUsersButtonClick = () => {
+  //   setShowUsers(!showUsers);
+  // };
+
+  // const handleRolesButtonClick = () => {
+  //   setShowRoles(!showRoles);
+  // };
+
+  const handleHeaderMenuClick = (menuname) => {
+    setActiveMenu(menuname);
+  }
+
+
+  const toggleDropdown = () => {
+    setIsDropdownVisable(!isDropdownVisable)
+  };
+
   return (
     <>
       <table className="table my-0 border border-top-0 w-100 vh-100">
@@ -187,9 +209,9 @@ function Main(props) {
           <tr style={{ height: '40px' }} className='border-bottom'>
             <td className='p-1' >
               <div className='text-primary p-2 text-start' ><i>Hello!</i>
-                <b> <a href="#EditUser" data-bs-toggle="offcanvas" style={{ textDecoration: "none" }}>{GV.loggedInUser && GV.loggedInUser.username}</a></b>
+                <b> <a href="#EditLoggedInUser" data-bs-toggle="offcanvas" style={{ textDecoration: "none" }}>{GV.loggedInUser && GV.loggedInUser.username}</a></b>
               </div>
-              <div class="offcanvas offcanvas-end" id="EditUser">
+              <div class="offcanvas offcanvas-end" id="EditLoggedInUser">
                 <div className='mx-auto justify-content-center align-middle card' style={{ width: '100%' }} >
                   <div className=' mb-2 card-header display-6' >EditUser</div>
                   <div className='card-body'>
@@ -287,28 +309,6 @@ function Main(props) {
             </td>
             <div className='float-end' >
               <td >
-                {usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
-                  <>
-                    <div className="offcanvas offcanvas-end" id="addUser">
-                      <div className='mx-auto justify-content-center align-middle' style={{ width: '100%' }}>
-                        <SignUp loggedInUser={GV.loggedInUser} />
-                      </div>
-                    </div>
-                    <div>
-                      <button
-                        onClick={handleChatSignup}
-                        className="btn"
-                        type="button"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#addUser"
-                      >
-                        Add User
-                      </button>
-                    </div>
-                  </>
-                ) : null}
-              </td>
-              <td >
                 <div class="offcanvas offcanvas-end" id="addConversation">
                   <div className='mx-auto justify-content-center align-middle  card' style={{ width: '100%' }} >
                     <div className=' mb-2 card-header display-6' > New Conversation</div>
@@ -352,48 +352,85 @@ function Main(props) {
                     </div>
                   )}
                 </div>
-                <div>
+                {/* <div>
                   <button class="btn btn-" type="button" data-bs-toggle="offcanvas" data-bs-target="#addConversation">Add Conversation</button>
-                </div>
+                </div> */}
               </td>
               <td>
                 <div class="offcanvas offcanvas-end " id="deleteConversation" style={{ height: "200px" }}>
                   <div class="offcanvas-body">
-                    <>
-                      <div style={{ fontSize: "15px" }} className="mt-5">
-                        <table className="table table-borderless mt-3" >
-                          <tbody>
-                            <label className='float-start mx-2 my-0 h6'>Conversations</label>
-                            <tr>
-                              <td>
-                                <select className='form-select' onClick={(e) => setConversationId(e.target.selectedOptions[0].value)}>
-                                  {conversations && conversations.filter((_) => _.creator_id == GV.loggedInUser.user_id).map(_ => <option value={_.conversation_id} >{_.conversation_name}</option>)}
-                                </select>
-                              </td>
-                              <td>
-                                <button className='float-end' onClick={conversationDelete}>Delete</button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </>
+                    <div style={{ fontSize: "15px" }} className="mt-5">
+                      <table className="table table-borderless mt-3" >
+                        <tbody>
+                          <label className='float-start mx-2 my-0 h6'>Conversations</label>
+                          <tr >
+                            <td>
+                              <select className='form-select' onClick={(e) => setConversationId(e.target.selectedOptions[0].value)}>
+                                {conversations && conversations.filter((_) => _.creator_id == GV.loggedInUser.user_id).map(_ => <option value={_.conversation_id} >{_.conversation_name}</option>)}
+                              </select>
+                            </td>
+                            <td>
+                              <button className='float-end' onClick={conversationDelete}>Delete</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div >
-                <div>
+                {/* <div>
                   <button class="btn btn-" type="button" data-bs-toggle="offcanvas" data-bs-target="#deleteConversation"
                   >Delete Conversation</button>
-                </div>
+                </div> */}
+              </td>
+              {/* <td>
+                {usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
+                  <button class="btn btn-primary py-1 mx-2 ms-5 " type="button" onClick={handleUsersButtonClick}>
+                    Users
+                  </button>
+                ) : null}
+              </td> */}
+              <td>
+                <img src={threedots} alt="info" onClick={toggleDropdown} class="nav-link dropdown-toggle" data-bs-toggle="dropdown" style={{ cursor: 'pointer', width: "28px" }}>
+                </img>
+                <ul class="dropdown-menu" style={{ cursor: 'pointer' }}>
+                  <li class="dropdown-item">{usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
+                    <a onClick={(e) => handleHeaderMenuClick('roles')}>
+                      Roles
+                    </a>
+                  ) : null}</li>
+                  <li class="dropdown-item">{usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
+                    <a onClick={() => handleHeaderMenuClick('users')}>
+                      Users
+                    </a>
+                  ) : null}</li>
+                  <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#chat" onClick={() => handleHeaderMenuClick('chat')}>Chat</a></li>
+                  <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#addConversation">Add Conversation</a></li>
+                  <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#deleteConversation">Delete Conversation</a></li>
+                </ul>
               </td>
             </div>
           </tr>
-          <tr className='h-100'>
-            <td className='d-flex h-100 py-0'>
-              <div className="col-3 border-end p-0">
-                <ChatList socket={GV.thisSocket} users={GV.users} activeChat={activeChat} conversations={conversations} handleChatListClick={handleChatListClick} /></div>
-              <div className="col-12  d-flex p-2  "><SendMessage messageTemplate={messageTemplate} /></div>
-            </td>
-          </tr>
+          {/* showUsers */}
+          {activeMenu === "chat" ?
+            <tr className='h-100'>
+              <td className='d-flex h-100 py-0'>
+                <>
+                  <div className="col-3 border-end p-0">
+                    <ChatList socket={GV.thisSocket} users={GV.users} activeChat={activeChat} conversations={conversations} handleChatListClick={handleChatListClick} />
+                  </div>
+                  <div className="col-12  d-flex p-2  ">
+                    <SendMessage messageTemplate={messageTemplate} />
+                  </div>
+                </>
+              </td>
+            </tr>
+            :
+            activeMenu === "roles" ?
+              <Roles />
+              : activeMenu === 'users' && <Users usersData={usersData} conversations={conversations}></Users>
+          }
+          {/* {<Users usersData={usersData} conversations={conversations} */}
         </tbody >
       </table >
     </>

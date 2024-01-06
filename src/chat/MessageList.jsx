@@ -17,6 +17,8 @@ function MessageList({ messageList, activeChat }) {
     activeChat &&
     GV.conversations &&
     GV.conversations.find(_ => _.conversation_id === activeChat.conversation_id)?.composing;
+
+
   const contextMessages = activeChat && messageList &&
     messageList.filter(_ =>
       (_.conversation_id == activeChat.conversation_id));
@@ -31,7 +33,7 @@ function MessageList({ messageList, activeChat }) {
     setInfoClicked((prevInfoClicked) => !prevInfoClicked);
   };
   const handleMemberEdit = () => {
-    conversationNonMembersGet({ conversation_id: activeChat.conversation_id }, (res) => {
+    conversationNonMembersGet({ conversation_id: activeChat.conversation_id, user_id: GV.loggedInUser.user_id }, (res) => {
       setConversationNonMembers(res);
     });
   };
@@ -136,8 +138,8 @@ function MessageList({ messageList, activeChat }) {
                     {conversationNonMembers && conversationNonMembers.length > 0 &&
                       <tr>
                         <td>
-                          <select className='form-select' onClick={(e) => setMemberToAdd(e.target.selectedOptions[0].value)}>
-                            {conversationNonMembers.map(_ => <option value={_.user_id} >{_.full_name}</option>)}
+                          <select className='form-select' onClick={(e) => setMemberToAdd(e.target.selectedOptions[0]?.value)}>
+                            {conversationNonMembers.map(_ => <option key={_.user_id} value={_.user_id} >{_.full_name}</option>)}
                           </select>
                         </td>
                         <td>
@@ -148,8 +150,8 @@ function MessageList({ messageList, activeChat }) {
                     {conversationNonMembers && conversationNonMembers.length > 0 &&
                       <tr>
                         <td>
-                          <select className='form-select' onClick={(e) => setMemberToDelete(e.target.selectedOptions[0].value)}>
-                            {conversationInfo[1].filter((_) => _.user_id !== GV.loggedInUser.user_id).map(_ => <option value={_.membership_id} >{_.participant_name}</option>)}
+                          <select className='form-select' onClick={(e) => setMemberToDelete(e.target.selectedOptions[0]?.value)}>
+                            {conversationInfo[1].filter((_) => _.user_id !== GV.loggedInUser.user_id).map(_ => <option key={_.membership_id} value={_.membership_id} >{_.participant_name}</option>)}
                           </select>
                         </td>
                         <td>
@@ -168,7 +170,7 @@ function MessageList({ messageList, activeChat }) {
         <div className="selected-user-details bg-light text-white ">
           <div className="row" style={{
             backgroundColor: "#e9ecef", marginLeft: '-8px',
-            marginTop: '4px', position: 'fixed', top: 50, width: '100%', zIndex: 1000, paddingBottom: "10px"
+            marginTop: '4px', position: 'fixed', top: 50, width: '100%', paddingBottom: "10px"
           }}>
             <div className="col">
               <img className="info_icon ps-1 pe-4 py-1 float-start btn " type="button" data-bs-toggle="offcanvas" data-bs-target="#demo" src={groupImg} style={{ width: '60px', cursor: 'pointer' }} alt="info"

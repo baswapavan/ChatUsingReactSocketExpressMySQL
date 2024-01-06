@@ -31,7 +31,7 @@ const validateUser = (req, res) => {
 };
 
 const users = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.query.loggedin_userid}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}', @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}', @p_mode := 'GET_ALL');`
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.query.loggedin_userid}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}', @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_role_id:= '1',@p_is_active := '1', @p_mode := 'GET_ALL');`
   console.log(query);
   con.query(query, (err, result) => {
     if (err) {
@@ -43,7 +43,7 @@ const users = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}', @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}', @p_mode := 'CREATE');`
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}', @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_role_id := ${req.body.role_id ? req.body.role_id : null},@p_is_active := '1', @p_mode := 'CREATE');`
   console.log(query);
   con.query(query, (err, result) => {
     if (err) {
@@ -54,9 +54,8 @@ const createUser = (req, res) => {
   });
 };
 
-/////////////////////////
 const updateUser = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := ${req.body.user_name ? `'${req.body.user_name}'` : null}, @p_password := ${req.body.password ? `'${req.body.password}'` : null}, @p_email := ${req.body.email ? `'${req.body.email}'` : null}, @p_full_name := ${req.body.full_name ? `'${req.body.full_name}'` : null}, @p_timezone := ${req.body.time_zone ? `'${req.body.time_zone}'` : null}, @p_about := ${req.body.about ? `'${req.body.about}'` : null}, @p_mode := 'UPDATE');`;
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := ${req.body.user_name ? `'${req.body.user_name}'` : null}, @p_password := ${req.body.password ? `'${req.body.password}'` : null}, @p_email := ${req.body.email ? `'${req.body.email}'` : null}, @p_full_name := ${req.body.full_name ? `'${req.body.full_name}'` : null}, @p_timezone := ${req.body.time_zone ? `'${req.body.time_zone}'` : null}, @p_about := ${req.body.about ? `'${req.body.about}'` : null}, @p_role_id := ${req.body.role_id ? req.body.role_id : null},@p_is_active := ${req.body.is_active ? `'${req.body.is_active}'` : null}, @p_mode := 'UPDATE');`;
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
@@ -66,10 +65,9 @@ const updateUser = (req, res) => {
     }
   })
 };
-////////////////////////////
+
 const deleteUser = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid}, @p_username := '${req.body.user_name}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}'
-    , @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}', @p_mode := 'DELETE');`
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid}, @p_username := '${req.body.user_name}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}',@p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_is_active := '1', @p_mode := 'DELETE');`
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
@@ -79,6 +77,60 @@ const deleteUser = (req, res) => {
     }
   })
 };
+
+const roles = (req, res) => {
+  var query = `CALL usp_RolesCRUD(@p_role_id := '0',@p_role := 'role',@p_description := 'About Member',@p_mode := 'READ');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while getting roles:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const createRole = (req, res) => {
+  var query = `CALL usp_RolesCRUD(@p_role_id := ${req.query.role_id ? req.query.role_id : null},@p_role := ${req.query.role ? `'${req.query.role}'` : null},@p_description := ${req.query.description ? `'${req.query.description}'` : null},@p_mode := 'CREATE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while createing role:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const updateRole = (req, res) => {
+  var query = `CALL usp_RolesCRUD(@p_role_id := ${req.query.role_id ? `${req.query.role_id}` : null},@p_role := '${req.query.role ? req.query.role : null}',@p_description := ${req.query.description ? `'${req.query.description}'` : null},@p_mode := 'UPDATE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while updateing role:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const deleteRole = (req, res) => {
+  var query = `CALL usp_RolesCRUD(@p_role_id := ${req.query.role_id ? `${req.query.role_id}` : null},@p_role := '${req.query.role ? req.query.role : null}',@p_description := ${req.query.description ? `'${req.query.description}'` : null},@p_mode := 'DELETE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while updateing role:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+
 
 const conversationsGet = (req, res) => {
   var query = `CALL usp_ConversationsGet(@p_user_name := '${req.query.user_name}');`
@@ -147,8 +199,7 @@ const conversationToDelete = (req, res) => {
 
 ///////////
 const conversationNonMembersGet = (req, res) => {
-  var query = `CALL usp_ConversationsCRUD(@p_conversation_id := ${req.query.conversation_id ? req.query.conversation_id : null}, @type := 'One-to-One',@p_name := ${req.body.name ? req.body.name : null},@p_creator_id := ${req.body.creator_id ? req.body.creator_id : null},@p_member_count := '2' ,
-    @p_metadata := ${req.body.meta_data ? req.body.meta_data : null},@p_settings := ${req.body.settings ? req.body.settings : null},@p_profile_image := ${req.body.profile_image ? req.body.profile_image : null},@p_mode :='NONUSERS');`
+  var query = `CALL usp_NonConversationMembers(@p_conversation_id :=${req.query.conversation_id}, @p_user_id := ${req.query.user_id});`
   console.log(query);
   con.query(query, (err, result) => {
     if (err) {
@@ -199,6 +250,7 @@ const conversationMembersGet = (req, res) => {
     }
   })
 };
+
 
 const conversationMemberAdd = (req, res) => {
   var query = `CALL usp_ConversationMembersCRUD(@p_membership_id := null,@p_conversation_id := ${req.body.conversation_id ? req.body.conversation_id : null},@p_user_id := ${req.body.user_id ? req.body.user_id : null},@p_role := '${req.body.role ? req.body.role : null}',@p_status := '${req.body.status}',@p_unread_count := '0',
@@ -296,6 +348,10 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  roles,
+  createRole,
+  updateRole,
+  deleteRole,
   conversationsGet,
   conversationInfoGet,
   conversationAdd,

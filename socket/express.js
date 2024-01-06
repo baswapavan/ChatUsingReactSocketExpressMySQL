@@ -48,7 +48,27 @@ app.delete('/user', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.deleteUser(req, res);
 });
+///////////////////////////////////////////////////////////////////////////////////////////
+app.get('/roles', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.roles(req, res);
+});
 
+app.post('/role', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.createRole(req, res);
+});
+
+app.put('/role', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.updateRole(req, res);
+});
+
+app.delete('/role', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.deleteRole(req, res);
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/conversations', (req, res) => {
   console.log(JSON.stringify(req.query));
   apis.conversationsGet(req, res);
@@ -89,17 +109,14 @@ app.post('/conversation/members', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.conversationWithMembersAdd(req, res);
 });
-/////////
 app.delete('/conversation/members/messages', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.conversationToDelete(req, res);
 });
-//////////
 app.post('/conversation/member', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.conversationMemberAdd(req, res);
 });
-
 
 app.delete('/conversation/member', (req, res) => {
   console.log(JSON.stringify(req.body));
