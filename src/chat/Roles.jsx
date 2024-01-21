@@ -77,7 +77,7 @@ function Roles() {
 
   return (
     <div>
-      <button type="button" class="btn btn-primary float-start mt-3 mb-3 ms-2" data-bs-toggle="offcanvas"
+      <button type="button" className="btn btn-primary float-start mt-3 mb-3 ms-2" data-bs-toggle="offcanvas"
         data-bs-target="#CreateRole" >Add Role</button>
       <div className='container pt-5'>
         <table className="table table-bordered">
@@ -142,12 +142,12 @@ function Roles() {
                 </div>
               )}
             </tr>
-            <div class="offcanvas offcanvas-end" id="CreateRole">
-              <div class="offcanvas-header">
-                <h1 class="offcanvas-title">CreateRole</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            <div className="offcanvas offcanvas-end" id="CreateRole">
+              <div className="offcanvas-header">
+                <h1 className="offcanvas-title">CreateRole</h1>
+                <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
               </div>
-              <div class="offcanvas-body">
+              <div className="offcanvas-body">
                 {newRole && (
                   <form>
                     <label className='float-start mx-2 my-0 h6' htmlFor="email">Role:</label>

@@ -91,7 +91,7 @@ function Users({ usersData }) {
 
   return (
     <tr>
-      <button type="button" class="btn btn-primary float-start mt-3 mb-3 ms-2" data-bs-toggle="offcanvas"
+      <button type="button" className="btn btn-primary float-start mt-3 mb-3 ms-2" data-bs-toggle="offcanvas"
         data-bs-target="#addUser" >Add User</button>
       <div className='container pt-5'>
         <table className="table table-bordered" >
@@ -172,7 +172,7 @@ function Users({ usersData }) {
                     placeholder='About'
                     id="About"
                   />
-                  <lable className='float-start mx-2 my-0 h6'>Role:</lable>
+                  <label className='float-start mx-2 my-0 h6'>Role:</label>
                   <select
                     className='form-select  m-2 p-2 my-3'
                     value={selectedUser.role_id}
@@ -185,7 +185,7 @@ function Users({ usersData }) {
                       </option>
                     ))}
                   </select>
-                  <lable className='float-start mx-2 my-0 h6'>Status:</lable>
+                  <label className='float-start mx-2 my-0 h6'>Status:</label>
                   <select
                     value={selectedUser.is_active}
                     onChange={(e) => setSelectedUser({ ...selectedUser, is_active: e.target.value })}
@@ -200,8 +200,8 @@ function Users({ usersData }) {
                 </form>
               )}
               <div id="accordion"  >
-                <div class="card mt-3">
-                  <div class="card-header">
+                <div className="card mt-3">
+                  <div className="card-header">
                     <a data-bs-toggle="collapse"
                       className='text-decoration-none'
                       href="#collapseOne" onClick={handleConversatioGet}
@@ -209,8 +209,8 @@ function Users({ usersData }) {
                       User Conversation
                     </a>
                   </div>
-                  <div id="collapseOne" class="collapse" data-bs-parent="#accordion">
-                    <div class="card-body" >
+                  <div id="collapseOne" className="collapse" data-bs-parent="#accordion">
+                    <div className="card-body" >
                       {conversations && conversations.length > 0 ? <table className="table " style={{ maxHeight: '300px', overflow: 'auto' }}>
                         <thead>
                           <tr >
@@ -245,7 +245,7 @@ function Users({ usersData }) {
         )}
         {/* /////////// */}
         <td >
-          {usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
+          {usersData && (usersData.some?.(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
             <>
               <div className="offcanvas offcanvas-end" id="addUser">
                 <div className='mx-auto justify-content-center align-middle' style={{ width: '100%' }}>

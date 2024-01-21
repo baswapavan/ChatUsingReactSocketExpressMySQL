@@ -74,7 +74,7 @@ function SignUp(props) {
               onClick={handleRolesGet}
               onChange={(e) => setRole(e.target.value)}
             >
-              <option value="" disabled selected>Select a role</option>
+              <option value="" disabled select>Select a role</option>
               {rolesDataIn && rolesDataIn.map((_) => (
                 <option key={_.role_id} value={_.role_id}>
                   {_.role}

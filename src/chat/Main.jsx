@@ -44,11 +44,9 @@ function Main(props) {
         meta_data: description,
         profile_image: profileImage,
       }, (result) => {
-        // setConversations(prevConversations => [...prevConversations, result[0]]);
-        setConversations(prevConversations => [result[0], ...prevConversations]);
-        setCreationStatus('success');
-        setActiveChat(result[0]); // Select the new conversation
-        // console.log('Active Chat after setting:', result[0]); 
+        setConversations(prevConversations => [result[1], ...prevConversations]);
+        setCreationStatus(result[0]);
+        setActiveChat(result[1]); // Select the new conversation
         setGV({ ...GV, selectedUser: result[0] });
         setNeedUpdate(n => !n);
       });
@@ -71,7 +69,7 @@ function Main(props) {
           about: about,
         },
         (result) => {
-          setEditStatus('success');
+          setEditStatus(result);
         }
       );
     } catch (error) {
@@ -210,18 +208,16 @@ function Main(props) {
             <td className='p-1' >
               <div className='text-primary p-2 text-start' ><i>Hello!</i>
                 <b> <a href="#EditLoggedInUser" data-bs-toggle="offcanvas" style={{ textDecoration: "none" }}>{GV.loggedInUser && GV.loggedInUser.username}</a></b>
-              </div>
-              <div class="offcanvas offcanvas-end" id="EditLoggedInUser">
-                <div className='mx-auto justify-content-center align-middle card' style={{ width: '100%' }} >
-                  <div className=' mb-2 card-header display-6' >EditUser</div>
-                  <div className='card-body'>
-                    {usersData &&
-                      usersData
-                        .filter((user) => user.user_id == GV.loggedInUser.user_id)
-                        .map((user) => (
-                          <form key={user.user_id}>
-                            <>
-                              <label className='float-start mx-2 my-0 h6' htmlFor="password">Password:</label>
+                <div className="offcanvas offcanvas-end" id="EditLoggedInUser">
+                  <div className='mx-auto justify-content-center align-middle card' style={{ width: '100%' }} >
+                    <div className=' mb-2 card-header display-6' >EditUser</div>
+                    <div className='card-body'>
+                      {usersData &&
+                        usersData
+                          .filter((user) => user.user_id == GV.loggedInUser.user_id)
+                          .map((user) => (
+                            <form key={user.user_id}>
+                              <label className='float-start mx-2 my-0 h6' >Password:</label>
                               <input
                                 type="password"
                                 // value={user.password_hash}
@@ -232,7 +228,7 @@ function Main(props) {
                                 id="password"
                                 onClick={handleEditClick}
                               />
-                              <label className='float-start mx-2 my-0 h6' htmlFor="email">Email:</label>
+                              <label className='float-start mx-2 my-0 h6' >Email:</label>
                               <input
                                 type="text"
                                 // value={user.email}
@@ -243,7 +239,7 @@ function Main(props) {
                                 id="email"
                                 onClick={handleEditClick}
                               />
-                              <label className='float-start mx-2 my-0 h6' htmlFor="fullname">Full Name:</label>
+                              <label className='float-start mx-2 my-0 h6' >Full Name:</label>
                               <input
                                 type="text"
                                 // value={user.full_name}
@@ -254,7 +250,7 @@ function Main(props) {
                                 id="fullname"
                                 onClick={handleEditClick}
                               />
-                              <label className='float-start mx-2 my-0 h6' htmlFor="profileImage">Profile Image:</label>
+                              <label className='float-start mx-2 my-0 h6' >Profile Image:</label>
                               <input
                                 type="file"
                                 // value={user.profileImage}
@@ -262,10 +258,10 @@ function Main(props) {
                                 onChange={(e) => setProfileImage(e.target.value)}
                                 className='form-control m-2 p-2 my-3'
                                 placeholder='Profile image'
-                                id="profileImage"
+                                id="userProfileImage"
                                 onClick={handleEditClick}
                               />
-                              <label className='float-start mx-2 my-0 h6' htmlFor="timezone">Time Zone:</label>
+                              <label className='float-start mx-2 my-0 h6' >Time Zone:</label>
                               <input
                                 type="text"
                                 // value={user.timezone}
@@ -287,131 +283,117 @@ function Main(props) {
                                 id="about"
                                 onClick={handleEditClick}
                               />
-                            </>
-                          </form>
-                        ))}
-                    <div>
-                      <input type="submit" onClick={updateSubmit} className='btn btn-primary m-0' value="Update"></input>
+                            </form>
+                          ))}
+                      <div>
+                        <input type="submit" onClick={updateSubmit} className='btn btn-primary m-0' value="Update"></input>
+                      </div>
                     </div>
                   </div>
+                  {editStatus && editStatus[0].status === 1 && (
+                    <div className="alert alert-success mt-3 mx-4">
+                      {editStatus[0].message}</div>
+                  )}
+                  {editStatus === 'error' && (
+                    <div class="alert alert-danger mt-5 m-4" >
+                      Failed to updated UserDetials. Please try again.
+                    </div>
+                  )}
                 </div>
-                {editStatus === 'success' && (
-                  <div class="alert alert-success mt-3 mx-4" role="alert">
-                    UserDetials successfully updated!
+              </div>
+            </td>
+            <td >
+              <div className="offcanvas offcanvas-end" id="addConversation">
+                <div className='mx-auto justify-content-center align-middle  card' style={{ width: '100%' }} >
+                  <div className=' mb-2 card-header display-6' > New Conversation</div>
+                  <div className='card-body'>
+                    <form>
+                      <span className='float-start mx-2 my-0 h6'>Conversation Name:</span>
+                      <input type="text" className="form-control m-2 p-2 my-3" id="conversationName" name="conversationName" required onChange={(e) => setConversationName(e.target.value)} />
+                      <span className='float-start mx-2 my-0 h6'>Members:</span>
+                      <select className="form-select m-2 p-2 my-3" id="members" name="members[]" multiple required
+                        onChange={(e) => {
+                          const selectedOptions = Array.from(e.target.selectedOptions);
+                          const selectedUserIds = selectedOptions.map(option => option.value);
+                          setMembers(selectedUserIds);
+                        }}
+                      >
+                        {usersData && usersData
+                          .filter((_) => _.user_id !== GV.loggedInUser.user_id)
+                          .map(_ => (
+                            <option key={_.user_id} value={_.user_id}>
+                              {_.full_name}
+                            </option>
+                          ))}
+                      </select>
+                      <span className='float-start mx-2 my-0 h6' >Description:</span>
+                      <textarea className="form-control m-2 p-2 my-3" id="description" name="description" rows="3" onChange={(e) => setDescription(e.target.value)}></textarea>
+                      <span className='float-start mx-2 my-0 h6' >Profile Image:</span>
+                      <input type="file" className="form-control m-2 p-2 my-3" id="conversationProfileImage" name="conversationProfileImage" accept="image/*" onChange={(e) => handleProfileImageChange(e)}
+                      />
+                      <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                    </form>
+                  </div>
+                </div>
+                {createStatus && createStatus[0].status === 1 && (
+                  <div className="alert alert-success mt-3 m-4" role="alert">
+                    {createStatus[0].message}
                   </div>
                 )}
-                {editStatus === 'error' && (
-                  <div class="alert alert-danger mt-5 m-4" role="alert">
-                    Failed to updated UserDetials. Please try again.
+                {createStatus === 'error' && (
+                  <div className="alert alert-danger mt-3 m-4" role="alert">
+                    Failed to create conversation. Please try again.
                   </div>
                 )}
               </div>
             </td>
-            <div className='float-end' >
-              <td >
-                <div class="offcanvas offcanvas-end" id="addConversation">
-                  <div className='mx-auto justify-content-center align-middle  card' style={{ width: '100%' }} >
-                    <div className=' mb-2 card-header display-6' > New Conversation</div>
-                    <div className='card-body'>
-                      <form>
-                        <label className='float-start mx-2 my-0 h6'>Conversation Name:</label>
-                        <input type="text" class="form-control m-2 p-2 my-3" id="conversationName" name="conversationName" required onChange={(e) => setConversationName(e.target.value)} />
-                        <label className='float-start mx-2 my-0 h6'>Members:</label>
-                        <select className="form-select m-2 p-2 my-3" id="members" name="members[]" multiple required
-                          onChange={(e) => {
-                            const selectedOptions = Array.from(e.target.selectedOptions);
-                            const selectedUserIds = selectedOptions.map(option => option.value);
-                            setMembers(selectedUserIds);
-                          }}
-                        >
-                          {usersData && usersData
-                            .filter((_) => _.user_id !== GV.loggedInUser.user_id)
-                            .map(_ => (
-                              <option key={_.user_id} value={_.user_id}>
-                                {_.full_name}
-                              </option>
-                            ))}
-                        </select>
-                        <label className='float-start mx-2 my-0 h6' >Description:</label>
-                        <textarea class="form-control m-2 p-2 my-3" id="description" name="description" rows="3" onChange={(e) => setDescription(e.target.value)}></textarea>
-                        <label className='float-start mx-2 my-0 h6' >Profile Image:</label>
-                        <input type="file" class="form-control m-2 p-2 my-3" id="profileImage" name="profileImage" accept="image/*" onChange={(e) => handleProfileImageChange(e)}
-                        />
-                        <button type="submit" class="btn btn-primary" onClick={handleSubmit}>Submit</button>
-                      </form>
-                    </div>
+            <td>
+              <div className="offcanvas offcanvas-end " id="deleteConversation" style={{ height: "200px" }}>
+                <div className="offcanvas-body">
+                  <div style={{ fontSize: "15px" }} className="mt-5">
+                    <table className="table table-borderless mt-3" >
+                      <tbody>
+                        <label className='float-start mx-2 my-0 h6'>Conversations</label>
+                        <tr >
+                          <td>
+                            <select className='form-select' onClick={(e) => setConversationId(e.target.selectedOptions[0].value)}>
+                              {conversations && conversations.filter((_) => _.creator_id == GV.loggedInUser.user_id).map(_ => <option key={_.conversation_id} value={_.conversation_id} >{_.conversation_name}</option>)}
+                            </select>
+                          </td>
+                          <td>
+                            <button className='float-end' onClick={conversationDelete}>Delete</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                  {createStatus === 'success' && (
-                    <div class="alert alert-success mt-3 m-4" role="alert">
-                      Conversation successfully created!
-                    </div>
-                  )}
-                  {createStatus === 'error' && (
-                    <div class="alert alert-danger mt-3 m-4" role="alert">
-                      Failed to create conversation. Please try again.
-                    </div>
-                  )}
                 </div>
-                {/* <div>
-                  <button class="btn btn-" type="button" data-bs-toggle="offcanvas" data-bs-target="#addConversation">Add Conversation</button>
-                </div> */}
-              </td>
-              <td>
-                <div class="offcanvas offcanvas-end " id="deleteConversation" style={{ height: "200px" }}>
-                  <div class="offcanvas-body">
-                    <div style={{ fontSize: "15px" }} className="mt-5">
-                      <table className="table table-borderless mt-3" >
-                        <tbody>
-                          <label className='float-start mx-2 my-0 h6'>Conversations</label>
-                          <tr >
-                            <td>
-                              <select className='form-select' onClick={(e) => setConversationId(e.target.selectedOptions[0].value)}>
-                                {conversations && conversations.filter((_) => _.creator_id == GV.loggedInUser.user_id).map(_ => <option value={_.conversation_id} >{_.conversation_name}</option>)}
-                              </select>
-                            </td>
-                            <td>
-                              <button className='float-end' onClick={conversationDelete}>Delete</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div >
-                {/* <div>
+              </div >
+              {/* <div>
                   <button class="btn btn-" type="button" data-bs-toggle="offcanvas" data-bs-target="#deleteConversation"
                   >Delete Conversation</button>
                 </div> */}
-              </td>
-              {/* <td>
-                {usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
-                  <button class="btn btn-primary py-1 mx-2 ms-5 " type="button" onClick={handleUsersButtonClick}>
+            </td>
+            <td>
+              <img src={threedots} alt="info" onClick={toggleDropdown} className="nav-link dropdown-toggle" data-bs-toggle="dropdown" style={{ cursor: 'pointer', width: "28px" }}>
+              </img>
+              <ul className="dropdown-menu" style={{ cursor: 'pointer' }}>
+                <li className="dropdown-item">{usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
+                  <a onClick={(e) => handleHeaderMenuClick('roles')}>
+                    Roles
+                  </a>
+                ) : null}</li>
+                <li className="dropdown-item">{usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
+                  <a onClick={() => handleHeaderMenuClick('users')}>
                     Users
-                  </button>
-                ) : null}
-              </td> */}
-              <td>
-                <img src={threedots} alt="info" onClick={toggleDropdown} class="nav-link dropdown-toggle" data-bs-toggle="dropdown" style={{ cursor: 'pointer', width: "28px" }}>
-                </img>
-                <ul class="dropdown-menu" style={{ cursor: 'pointer' }}>
-                  <li class="dropdown-item">{usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
-                    <a onClick={(e) => handleHeaderMenuClick('roles')}>
-                      Roles
-                    </a>
-                  ) : null}</li>
-                  <li class="dropdown-item">{usersData && (usersData.some(_ => _.user_id === GV.loggedInUser.user_id && _.role_id === 1)) ? (
-                    <a onClick={() => handleHeaderMenuClick('users')}>
-                      Users
-                    </a>
-                  ) : null}</li>
-                  <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#chat" onClick={() => handleHeaderMenuClick('chat')}>Chat</a></li>
-                  <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#addConversation">Add Conversation</a></li>
-                  <li><a class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#deleteConversation">Delete Conversation</a></li>
-                </ul>
-              </td>
-            </div>
+                  </a>
+                ) : null}</li>
+                <li><a className="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#chat" onClick={() => handleHeaderMenuClick('chat')}>Chat</a></li>
+                <li><a className="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#addConversation">Add Conversation</a></li>
+                <li><a className="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#deleteConversation">Delete Conversation</a></li>
+              </ul>
+            </td>
           </tr>
-          {/* showUsers */}
           {activeMenu === "chat" ?
             <tr className='h-100'>
               <td className='d-flex h-100 py-0'>
@@ -430,7 +412,6 @@ function Main(props) {
               <Roles />
               : activeMenu === 'users' && <Users usersData={usersData} conversations={conversations}></Users>
           }
-          {/* {<Users usersData={usersData} conversations={conversations} */}
         </tbody >
       </table >
     </>

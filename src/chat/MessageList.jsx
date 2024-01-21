@@ -80,14 +80,14 @@ function MessageList({ messageList, activeChat }) {
 
   return (
     <>
-      <div class="offcanvas offcanvas-end " id="demo">
+      <div className="offcanvas offcanvas-end " id="demo">
         {activeChat && (
-          <div class="offcanvas-header container border-bottom">
-            <h1 class="offcanvas-title">{activeChat.conversation_name}</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+          <div className="offcanvas-header container border-bottom">
+            <h1 className="offcanvas-title">{activeChat.conversation_name}</h1>
+            <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
           </div>
         )}
-        <div class="offcanvas-body">
+        <div className="offcanvas-body">
           {conversationInfo && (
             <>
               {conversationInfo[0].map((conversation, index) => (
@@ -96,7 +96,7 @@ function MessageList({ messageList, activeChat }) {
                     <div>
                       <img className="rounded" style={{ width: '120px', paddingTop: '0px' }} src={groupImg} alt="info" />
                     </div>
-                    <div class='' style={{ marginLeft: '20px', marginTop: '-10px', fontSize: "14px" }}>
+                    <div className='' style={{ marginLeft: '20px', marginTop: '-10px', fontSize: "14px" }}>
                       <table className="table-borderless " >
                         <tbody >
                           <tr >
@@ -131,8 +131,8 @@ function MessageList({ messageList, activeChat }) {
                   <tbody>
                     {conversationInfo[1].map((conversationmembers, index) => (
                       <tr >
-                        <td class="float-start">{conversationmembers.participant_name}</td>
-                        <td class="float-end">{conversationmembers.role}</td>
+                        <td className="float-start">{conversationmembers.participant_name}</td>
+                        <td className="float-end">{conversationmembers.role}</td>
                       </tr>
                     ))}
                     {conversationNonMembers && conversationNonMembers.length > 0 &&

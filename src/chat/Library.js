@@ -116,7 +116,7 @@ export const updateUser = ({ loggedin_userid, user_name, password, email, full_n
     }
   }).then(response => response.json())
     .then(json => {
-      call_back(json);
+      call_back(json[0]);
 
     })
 }
@@ -182,8 +182,6 @@ export const conversationInfoGet = ({ conversation_id }, call_back) => {
     }
   }).then(response => response.json())
     .then(json => {
-      console.log('API calling')
-      console.log(json)
       call_back(json);
     })
 }
@@ -196,8 +194,6 @@ export const conversationNonMembersGet = ({ conversation_id, user_id }, call_bac
     }
   }).then(response => response.json())
     .then(json => {
-      console.log('API calling')
-      console.log(json)
       call_back(json[0]);
     })
 }
@@ -244,7 +240,9 @@ export const conversationWithMembersAdd = ({ name, creator_id, meta_data, profil
     }
   }).then(response => response.json())
     .then(json => {
-      call_back(json[1]);
+      // console.log('Library', json.slice(0, 2))
+      // call_back(json.slice(0, 2));
+      call_back(json.slice(0, 2));
 
     })
 }
