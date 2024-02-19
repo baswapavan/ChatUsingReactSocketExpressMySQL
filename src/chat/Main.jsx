@@ -7,6 +7,9 @@ import Users from './Users';
 import threedots from './three-dots.png';
 import { conversationsGet, getChatUser, conversationWithMembersAdd, users, updateUser, conversationToDelete } from './Library';
 import Roles from './Roles';
+import Tasks from './Tasks';
+import Statuses from './Statuses';
+import Priorities from './Priorities';
 
 function Main(props) {
   const { GV, setGV } = useContext(GVContext);
@@ -183,13 +186,7 @@ function Main(props) {
     });
   }
 
-  // const handleUsersButtonClick = () => {
-  //   setShowUsers(!showUsers);
-  // };
 
-  // const handleRolesButtonClick = () => {
-  //   setShowRoles(!showRoles);
-  // };
 
   const handleHeaderMenuClick = (menuname) => {
     setActiveMenu(menuname);
@@ -369,10 +366,6 @@ function Main(props) {
                   </div>
                 </div>
               </div >
-              {/* <div>
-                  <button class="btn btn-" type="button" data-bs-toggle="offcanvas" data-bs-target="#deleteConversation"
-                  >Delete Conversation</button>
-                </div> */}
             </td>
             <td>
               <img src={threedots} alt="info" onClick={toggleDropdown} className="nav-link dropdown-toggle" data-bs-toggle="dropdown" style={{ cursor: 'pointer', width: "28px" }}>
@@ -388,6 +381,9 @@ function Main(props) {
                     Users
                   </a>
                 ) : null}</li>
+                <li><a className="dropdown-item" onClick={() => handleHeaderMenuClick('tasks')}>Tasks</a></li>
+                <li><a className="dropdown-item" onClick={() => handleHeaderMenuClick('statuses')}>Statuses</a></li>
+                <li><a className="dropdown-item" onClick={() => handleHeaderMenuClick('priorities')}>Priorities</a></li>
                 <li><a className="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#chat" onClick={() => handleHeaderMenuClick('chat')}>Chat</a></li>
                 <li><a className="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#addConversation">Add Conversation</a></li>
                 <li><a className="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#deleteConversation">Delete Conversation</a></li>
@@ -401,7 +397,7 @@ function Main(props) {
                   <div className="col-3 border-end p-0">
                     <ChatList socket={GV.thisSocket} users={GV.users} activeChat={activeChat} conversations={conversations} handleChatListClick={handleChatListClick} />
                   </div>
-                  <div className="col-12  d-flex p-2  ">
+                  <div className="col-10  d-flex p-2  ">
                     <SendMessage messageTemplate={messageTemplate} />
                   </div>
                 </>
@@ -410,7 +406,8 @@ function Main(props) {
             :
             activeMenu === "roles" ?
               <Roles />
-              : activeMenu === 'users' && <Users usersData={usersData} conversations={conversations}></Users>
+              : activeMenu === 'users' ? <Users usersData={usersData} conversations={conversations}></Users>
+                : activeMenu === "tasks" ? <Tasks usersData={usersData} /> : activeMenu === "statuses" ? <Statuses /> : activeMenu === "priorities" && <Priorities />
           }
         </tbody >
       </table >

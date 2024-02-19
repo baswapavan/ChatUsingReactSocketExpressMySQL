@@ -1,7 +1,9 @@
 // import {Server} from "socket.io";
 // import { writeFile } from "node:fs";
 const { Server } = require("socket.io");
+const fs = require("fs");
 const { writeFile } = require("node:fs");
+const { addFile } = require("./AWSLibrary");
 // const socketServerURL = '';
 
 const io = new Server({
@@ -77,7 +79,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on('newUser', ({ username, email, user_id, conversation_id }, call_back) => {
-    //console.log(`${username},${socket.id}`);
+    //console.log(${username},${socket.id});
     let user = addUser({ username, email, user_id, conversation_id }, socket.id);
     call_back(user);
     console.log(onlineUsers);
@@ -112,35 +114,51 @@ io.on("connection", (socket) => {
   });
 
   socket.on("upload", (objImage, callback) => {
-    console.log('In upload file'); // <Buffer 25 50 44 ...>
-    // console.log(data);
+    console.log('In upload file');
+
+
+    const timeStamp = Date.now();
+    const uniqueFileName = `${objImage.name}_${timeStamp}`
+
+
+
 
     // save the content to the disk, for example
-    writeFile(`../public/${objImage.name}`, objImage.data, (err) => {
-      callback({
-        message: err ? err
-          : {
-            ...objImage,
-            // path: `http://localhost:3000/${objImage.name}`
-            path: `${objImage.name}`
-            , data: ""
-          }
-      });
-      const returnObjImage = {
-        ...objImage,
-        // path: `http://localhost:3000/${objImage.name}`
-        path: `${objImage.name}`
-        , data: ""
+    writeFile(`../public/${uniqueFileName}`, objImage.data, (err) => {
+
+      //define parameters to upload
+      const params = {
+        Bucket: 'indiausers',
+        Key: uniqueFileName,
+        Body: fs.createReadStream(`../public/${uniqueFileName}`),
+        ContentType: 'image/jpeg'
       };
-      objImage.receiverSocketID && io.to(objImage.receiverSocketID).emit('getMessage', { ...returnObjImage, t: getTimeStamp() });
+      console.log("Test:" + objImage.name)
 
-      io.to(objImage.senderSocketID).emit('getMessage', { ...returnObjImage, t: getTimeStamp() });
+      const filePath = addFile(params, (res) => {
+        console.log('File path:' + res);
+        const returnObjImage = {
+          ...objImage,
+          path: res,
+          data: ''
+        };
+        callback({
+          message: err ? err
+            : {
+              ...objImage,
+              path: res
+              , data: ""
+            }
+        });
 
+        console.log(returnObjImage);
+        objImage.receiverSocketID && io.to(objImage.receiverSocketID).emit('getMessage', { ...returnObjImage, t: getTimeStamp() });
+
+        io.to(objImage.senderSocketID).emit('getMessage', { ...returnObjImage, t: getTimeStamp() });
+      });
     });
   });
-
 });
-
 io.listen(5000, (res) => {
   console.log(res);
 });

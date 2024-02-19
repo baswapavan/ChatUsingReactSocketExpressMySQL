@@ -51,6 +51,7 @@ function Login() {
 
   const handleChatJoin = () => {
     validateUser({ username: username, password: password }, (res) => {
+      console.log(res)
       const objSocket = io(`http://localhost:5000`);
       setSocket(objSocket);
       addChatUser(objSocket, { username: username, email: email, user_id: res[0].user_id });

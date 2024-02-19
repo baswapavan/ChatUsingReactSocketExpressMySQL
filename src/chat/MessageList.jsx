@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import Library, { conversationInfoGet, getChatUser, conversationNonMembersGet, conversationMemberAdd, conversationMemberDelete } from './Library';
+import { conversationInfoGet, getChatUser, conversationNonMembersGet, conversationMemberAdd, conversationMemberDelete } from './Library';
 import { GVContext } from './Login';
 import groupImg from './group.png';
 
@@ -59,7 +59,8 @@ function MessageList({ messageList, activeChat }) {
         "receiverSocketID": "",
         "conversation_id": _.conversation_id,
         "msg": _.content,
-        "msgStatus": _.status
+        "msgStatus": _.status,
+        "content_type": _.content_type
       }
     });
   }
@@ -151,7 +152,7 @@ function MessageList({ messageList, activeChat }) {
                       <tr>
                         <td>
                           <select className='form-select' onClick={(e) => setMemberToDelete(e.target.selectedOptions[0]?.value)}>
-                            {conversationInfo[1].filter((_) => _.user_id !== GV.loggedInUser.user_id).map(_ => <option key={_.membership_id} value={_.membership_id} >{_.participant_name}</option>)}
+                            {conversationInfo[1].filter(_ => _.user_id !== GV.loggedInUser.user_id).map(_ => <option key={_.membership_id} value={_.membership_id} >{_.participant_name}</option>)}
                           </select>
                         </td>
                         <td>
@@ -185,7 +186,7 @@ function MessageList({ messageList, activeChat }) {
 
       {
         !contextMessages || contextMessages.length === 0 ? <>
-          <div className=' d-flex align-items-center'>You have neither selected an user nor you may have started the conversation yet!</div>
+          <div className=' d-flex align-items-center'>You have neither selected an conversation nor you may have started the conversation yet!</div>
           {
             isComposing &&
             <div style={{ fontStyle: 'italic' }}
@@ -202,9 +203,9 @@ function MessageList({ messageList, activeChat }) {
                       ? 'text-end '
                       : 'text-start'}
                 >
-                  {
+                  {_.content_type == "Text" &&
                     _.msg ? <span className="ps-2 pe-4 py-2 mw-50" style={_.senderUserName === loggedInUser.username ? { backgroundColor: '#eafade', borderRadius: '10px', lineHeight: '29px', overflowWrap: 'anywhere' } : { backgroundColor: '#dcdddb', borderRadius: '10px', lineHeight: '29px', overflowWrap: 'anywhere' }} > {_.msg} </span>
-                      : <img className="ps-2 pe-4 py-2 mw-50" src={_.path} width='200px' alt="img"></img>
+                    : <img className="ps-2 pe-4 py-2 mw-50" src={_.msg || _.path} width='200px' alt="img"></img>
                   }
                   <div style={{ fontSize: '10px' }} className='pt-1 pb-3 ps-2 pe-2'><span style={{ fontStyle: 'italic', color: '#adadad' }}>{_.t}</span></div>
                 </div>

@@ -48,27 +48,99 @@ app.delete('/user', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.deleteUser(req, res);
 });
-///////////////////////////////////////////////////////////////////////////////////////////
+
 app.get('/roles', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.roles(req, res);
 });
 
 app.post('/role', (req, res) => {
-  console.log(JSON.stringify(req.query));
+  console.log(JSON.stringify(req.body));
   apis.createRole(req, res);
 });
 
 app.put('/role', (req, res) => {
-  console.log(JSON.stringify(req.query));
+  console.log(JSON.stringify(req.body));
   apis.updateRole(req, res);
 });
 
 app.delete('/role', (req, res) => {
-  console.log(JSON.stringify(req.query));
+  console.log(JSON.stringify(req.body));
   apis.deleteRole(req, res);
 });
+
+app.get('/tasks', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.tasks(req, res);
+});
+
+app.get('/getalltasksfordropdown', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.getAllTasksForDropdown(req, res);
+});
+
+
+app.post('/task', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.createTask(req, res);
+});
+
+app.put('/task', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.updateTask(req, res);
+});
+
+app.delete('/task', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.deleteTask(req, res);
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+app.get('/taskstatuses', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.taskStatuses(req, res);
+});
+
+app.post('/taskstatus', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.createStatus(req, res);
+});
+
+app.put('/taskstatus', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.updateStatus(req, res);
+});
+
+app.delete('/taskstatus', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.deleteStatus(req, res);
+});
+
+app.get('/taskpriorities', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.taskPriorities(req, res);
+});
+
+app.post('/taskprioritie', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.createPrioritie(req, res);
+});
+
+app.put('/taskprioritie', (req, res) => {
+  console.log(JSON.stringify(req.body));
+  apis.updatePrioritie(req, res);
+});
+
+app.delete('/taskprioritie', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.deletePrioritie(req, res);
+});
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 app.get('/conversations', (req, res) => {
   console.log(JSON.stringify(req.query));
   apis.conversationsGet(req, res);

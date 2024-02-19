@@ -19,6 +19,7 @@ function SendMessage({ messageTemplate, userId }) {
   const [attachments, setAttachments] = useState();
   const [isedited, setIsEdited] = useState();
   const loggedInUser = getChatUser();
+  // const [path, setPath] = useState();
 
   const handleSendMessageClick = () => {
     const sendMessageInput = {
@@ -27,7 +28,8 @@ function SendMessage({ messageTemplate, userId }) {
       "receiverSocketID": GV.conversationMembers?.map(_ => _.user_id)?.map(cm => GV.users?.find(u => u.user_id == cm)?.socketID),
       "conversation_id": selectedUser.conversation_id,
       "msg": (message),
-      "msgStatus": 'INITIATED'
+      "msgStatus": 'INITIATED',
+      "contentType": "Text"
     }
     console.log(sendMessageInput.receiverSocketID);
     thisSocket.emit("sendMessage", sendMessageInput);
@@ -38,6 +40,24 @@ function SendMessage({ messageTemplate, userId }) {
     handleConversationSet();
 
     setMessage('');
+
+
+  }
+
+  const handleSendFileClick = (path) => {
+    addConversation({
+      conversationid: selectedUser.conversation_id,
+      senderid: loggedInUser.user_id,
+      // receiverid: selectedUser.user_id,
+      contenttype: 'image',
+      content: path,
+      parentmessageid,
+      reactions,
+      mentions,
+      forwardedfromconversationid,
+      attachments,
+      isedited,
+    });
   }
 
   const handleConversationSet = () => {
@@ -70,11 +90,17 @@ function SendMessage({ messageTemplate, userId }) {
     thisSocket.emit("upload", {
       data: files[0], name: files[0].name,
       "senderUserName": loggedInUser.username,
-      "conversationId": selectedUser.conversation_id,
+      "conversation_id": selectedUser.conversation_id,
       "receiverSocketID": GV.conversationMembers?.map(_ => _.user_id)?.map(cm => GV.users?.find(u => u.user_id == cm)?.socketID),
     }, (status) => {
       console.log(status);
-    });
+
+      // console.log('path1:' + path1);
+    }
+    );
+    const path1 = `https://indiausers.s3.ap-south-1.amazonaws.com/${files[0].name}`
+    // setPath(path1)
+    handleSendFileClick(path1)
   }
   return (<>
     <div className='align-self-end flex-column w-100'  >
@@ -84,12 +110,13 @@ function SendMessage({ messageTemplate, userId }) {
       </div> */}
       <MessageList messageList={messages} activeChat={selectedUser} />
       <div className='d-flex me-5 ms-1'>
-        <input type="text" className='col-11 text p-2'
-          value={message} onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e => e.key === 'Enter' ? handleSendMessageClick() : true)}
-        />
         {
           selectedUser && <>
+            <input type="text" className='col-11 text p-2'
+              value={message} onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e => e.key === 'Enter' ? handleSendMessageClick() : true)}
+            />
+
             <input type="button" className='col-1 btn btn-secondary' value=">"
               style={{ fontSize: '25px', paddingTop: '0px', width: '45px' }}
               onClick={handleSendMessageClick}></input>

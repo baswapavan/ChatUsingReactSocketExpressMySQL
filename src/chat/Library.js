@@ -17,6 +17,29 @@ export const getChatUser = () => {
   return JSON.parse(window.localStorage.getItem('chat'));
 };
 
+export const validateUser = ({ username, password }, call_back) => {
+  fetch(APIServerURL + '/validateUser', {
+    method: 'POST'
+    , body: JSON.stringify({
+      'username': username
+      , 'password': password
+
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      console.log(json);
+      if (json[0][0].response === 'valid')
+        call_back(json[0]);
+      else {
+        alert(json[0][0].response);
+      }
+    })
+}
+
+
 export const addChatUser = (socket, user) => {
   socket.emit('newUser', user, (res) => {
     //Set Chat user details in local storage.
@@ -44,28 +67,6 @@ export const addUser = ({ loggedin_userid, username, password, email, fullname, 
   }).then(response => response.json())
     .then(json => {
       console.log(json);
-    })
-}
-
-export const validateUser = ({ username, password }, call_back) => {
-  fetch(APIServerURL + '/validateUser', {
-    method: 'POST'
-    , body: JSON.stringify({
-      'username': username
-      , 'password': password
-
-    })
-    , headers: {
-      "Content-Type": "application/json"
-    }
-  }).then(response => response.json())
-    .then(json => {
-      console.log(json);
-      if (json[0][0].response === 'valid')
-        call_back(json[0]);
-      else {
-        alert(json[0][0].response);
-      }
     })
 }
 
@@ -125,7 +126,7 @@ export const roles = (call_back) => {
   fetch(APIServerURL + `/roles`, {
     method: 'GET'
     , headers: {
-      "Contant-Type": "application/json"
+      "Content-Type": "application/json"
     }
   }).then(response => response.json())
     .then(json => {
@@ -133,16 +134,15 @@ export const roles = (call_back) => {
     })
 }
 
-export const createRole = ({ role_id, role, description }, call_back) => {
-  fetch(APIServerURL + `/role?role=${role}&description=${description}`, {
+export const createRole = ({ role, description }, call_back) => {
+  fetch(APIServerURL + `/role`, {
     method: 'POST'
-    // , body: JSON.stringify({
-    //   " role_id": role_id,
-    //   "role": role,
-    //   "description": description
-    // })
+    , body: JSON.stringify({
+      "role": role,
+      "description": description
+    })
     , headers: {
-      "Contant-Type": "application/json"
+      "Content-Type": "application/json"
     }
   }).then(response => response.json())
     .then(json => {
@@ -151,10 +151,15 @@ export const createRole = ({ role_id, role, description }, call_back) => {
 }
 
 export const updateRole = ({ role_id, role, description }, call_back) => {
-  fetch(APIServerURL + `/role?role_id=${role_id}&role=${role}&description=${description}`, {
+  fetch(APIServerURL + `/role`, {
     method: 'PUT'
+    , body: JSON.stringify({
+      "role_id": role_id,
+      "role": role,
+      "description": description
+    })
     , headers: {
-      "Contant-Type": "application/json"
+      "Content-Type": "application/json"
     }
   }).then(response => response.json())
     .then(json => {
@@ -166,11 +171,211 @@ export const deleteRole = ({ role_id }, call_back) => {
   fetch(APIServerURL + `/role?role_id=${role_id}`, {
     method: 'DELETE'
     , headers: {
-      "Contant-Type": "application/json"
+      "Content-Type": "application/json"
     }
   }).then(response => response.json())
     .then(json => {
       call_back(json)
+    })
+}
+
+
+
+export const tasks = (call_back) => {
+  fetch(APIServerURL + `/tasks`, {
+    method: 'GET'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json[0])
+    })
+}
+
+export const getAllTasksForDropdown = (call_back) => {
+  fetch(APIServerURL + `/getalltasksfordropdown`, {
+    method: 'GET'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json[0])
+    })
+}
+
+export const createTask = ({ title, description, created_by, assigned_to, due_date, status_id, priority_id, parent_task_id }, call_back) => {
+  fetch(APIServerURL + '/task', {
+    method: 'POST'
+    , body: JSON.stringify({
+      'title': title,
+      "description": description,
+      "created_by": created_by,
+      "assigned_to": assigned_to,
+      "due_date": due_date,
+      "status_id": status_id,
+      "priority_id": priority_id,
+      "parent_task_id": parent_task_id
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+
+
+export const updateTask = ({ task_id, title, description, created_by, assigned_to, updated_by, due_date, status_id, priority_id, parent_task_id }, call_back) => {
+  fetch(APIServerURL + `/task`, {
+    method: 'PUT'
+    , body: JSON.stringify({
+      "task_id": task_id,
+      'title': title,
+      "description": description,
+      "created_by": created_by,
+      "assigned_to": assigned_to,
+      "updated_by": updated_by,
+      "due_date": due_date,
+      "status_id": status_id,
+      "priority_id": priority_id,
+      "parent_task_id": parent_task_id
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+export const deleteTask = ({ task_id }, call_back) => {
+  fetch(APIServerURL + `/task?task_id=${task_id}`, {
+    method: 'DELETE'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json)
+    })
+}
+
+export const taskStatuses = (call_back) => {
+  fetch(APIServerURL + `/taskstatuses`, {
+    method: 'GET'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json[0])
+    })
+}
+
+export const createStatus = ({ status_name, description }, call_back) => {
+  fetch(APIServerURL + '/taskstatus', {
+    method: 'POST'
+    , body: JSON.stringify({
+      'status_name': status_name,
+      "description": description,
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+export const updateStatus = ({ status_id, status_name, description }, call_back) => {
+  fetch(APIServerURL + '/taskstatus', {
+    method: 'PUT'
+    , body: JSON.stringify({
+      'status_id': status_id,
+      'status_name': status_name,
+      "description": description,
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+export const deleteStatus = ({ status_id }, call_back) => {
+  fetch(APIServerURL + `/taskstatus?status_id=${status_id}`, {
+    method: 'DELETE'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+export const taskPriorities = (call_back) => {
+  fetch(APIServerURL + `/taskpriorities`, {
+    method: 'GET'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json[0])
+    })
+}
+
+export const createPrioritie = ({ priority_name, description }, call_back) => {
+  fetch(APIServerURL + '/taskprioritie', {
+    method: 'POST'
+    , body: JSON.stringify({
+      'priority_name': priority_name,
+      "description": description,
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+export const updatePrioritie = ({ priority_id, priority_name, description }, call_back) => {
+  fetch(APIServerURL + '/taskprioritie', {
+    method: 'PUT'
+    , body: JSON.stringify({
+      'priority_id': priority_id,
+      'priority_name': priority_name,
+      "description": description,
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+export const deletePrioritie = ({ priority_id }, call_back) => {
+  fetch(APIServerURL + `/taskprioritie?priority_id=${priority_id}`, {
+    method: 'DELETE'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
     })
 }
 

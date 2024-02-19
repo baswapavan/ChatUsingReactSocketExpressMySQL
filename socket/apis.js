@@ -92,7 +92,7 @@ const roles = (req, res) => {
 };
 
 const createRole = (req, res) => {
-  var query = `CALL usp_RolesCRUD(@p_role_id := ${req.query.role_id ? req.query.role_id : null},@p_role := ${req.query.role ? `'${req.query.role}'` : null},@p_description := ${req.query.description ? `'${req.query.description}'` : null},@p_mode := 'CREATE');`
+  var query = `CALL usp_RolesCRUD(@p_role_id := ${req.body.role_id ? req.body.role_id : null},@p_role := ${req.body.role ? `'${req.body.role}'` : null},@p_description := ${req.body.description ? `'${req.body.description}'` : null},@p_mode := 'CREATE');`
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
@@ -105,7 +105,7 @@ const createRole = (req, res) => {
 };
 
 const updateRole = (req, res) => {
-  var query = `CALL usp_RolesCRUD(@p_role_id := ${req.query.role_id ? `${req.query.role_id}` : null},@p_role := '${req.query.role ? req.query.role : null}',@p_description := ${req.query.description ? `'${req.query.description}'` : null},@p_mode := 'UPDATE');`
+  var query = `CALL usp_RolesCRUD(@p_role_id := ${req.body.role_id ? `${req.body.role_id}` : null},@p_role := '${req.body.role ? req.body.role : null}',@p_description := ${req.body.description ? `'${req.body.description}'` : null},@p_mode := 'UPDATE');`
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
@@ -122,7 +122,7 @@ const deleteRole = (req, res) => {
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
-      res.send(`Error while updateing role:${err}`)
+      res.send(`Error while delecting role:${err}`)
     }
     else {
       res.send(result);
@@ -130,6 +130,182 @@ const deleteRole = (req, res) => {
   })
 };
 
+const tasks = (req, res) => {
+  var query = `CALL usp_TasksCRUD(@p_task_id := '1',@p_title := 'Test', @p_description := 'About Test',
+@p_due_date := '2024-02-01',@p_priority_id := '1',@p_status_id := '2',@p_assigned_to := '0',@p_parent_task_id := '2',@p_created_by := '13',@p_updated_by := '14',@p_mode :=  'READ');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while getting tasks:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+
+const getAllTasksForDropdown = (req, res) => {
+  var query = `CALL usp_GetAllTasksForDropdown();`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while getting tasks:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const createTask = (req, res) => {
+  var query = `CALL usp_TasksCRUD(@p_task_id :=${req.body.task_id ? `'${req.body.task_id}'` : null},@p_title := ${req.body.title ? `'${req.body.title}'` : null}, @p_description := ${req.body.description ? `'${req.body.description}'` : null},
+@p_due_date := ${req.body.due_date ? `'${req.body.due_date}'` : null},@p_priority_id :=${req.body.priority_id ? `${req.body.priority_id}` : null},@p_status_id :=${req.body.status_id ? `${req.body.status_id}` : null},@p_assigned_to := ${req.body.assigned_to ? `${req.body.assigned_to}` : null},@p_parent_task_id :=${req.body.parent_task_id ? `${req.body.parent_task_id}` : null},@p_created_by :=${req.body.created_by ? `${req.body.created_by}` : null},@p_updated_by := ${req.body.updated_by ? `'${req.body.updated_by}'` : null},@p_mode := 'CREATE');`
+  console.log(query);
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while createing task:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+
+const updateTask = (req, res) => {
+  var query = `CALL usp_TasksCRUD(@p_task_id :=${req.body.task_id ? `'${req.body.task_id}'` : null},@p_title := ${req.body.title ? `'${req.body.title}'` : null}, @p_description := ${req.body.description ? `'${req.body.description}'` : null},
+@p_due_date := ${req.body.due_date ? `'${req.body.due_date}'` : null},@p_priority_id :=${req.body.priority_id ? `'${req.body.priority_id}'` : null},@p_status_id :=${req.body.status_id ? `'${req.body.status_id}'` : null},@p_assigned_to := ${req.body.assigned_to ? `'${req.body.assigned_to}'` : null},@p_parent_task_id :=${req.body.parent_task_id ? `'${req.body.parent_task_id}'` : null},@p_created_by :=${req.body.created_by ? `'${req.body.created_by}'` : null},@p_updated_by := ${req.body.updated_by ? `'${req.body.updated_by}'` : null},@p_mode := 'UPDATE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while updateing task:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const deleteTask = (req, res) => {
+  var query = `CALL usp_TasksCRUD(@p_task_id :=${req.query.task_id ? `'${req.query.task_id}'` : null},@p_title := 'Test', @p_description := 'About Test',
+@p_due_date := '2024-02-01',@p_priority_id := '1',@p_status_id := '1',@p_assigned_to := '0',@p_parent_task_id := '2',@p_created_by := '13',@p_updated_by := '14',@p_mode := 'DELETE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while delecting task:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const taskStatuses = (req, res) => {
+  var query = `CALL usp_TaskStatusesCRUD(@p_status_id := 1,@p_status_name := 'Todo',@p_description := 'complete the task as soon as posable',@p_mode := 'READ');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while getting statuses:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const createStatus = (req, res) => {
+  var query = `CALL usp_TaskStatusesCRUD(@p_status_id := ${req.body.status_id ? `'${req.body.status_id}'` : null},@p_status_name := ${req.body.status_name ? `'${req.body.status_name}'` : null},@p_description := ${req.body.description ? `'${req.body.description}'`
+    : null},@p_mode := 'CREATE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while createing status:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const updateStatus = (req, res) => {
+  var query = `CALL usp_TaskStatusesCRUD(@p_status_id := ${req.body.status_id ? `'${req.body.status_id}'` : null},@p_status_name := ${req.body.status_name ? `'${req.body.status_name}'` : null},@p_description := ${req.body.description ? `'${req.body.description}'`
+    : null},@p_mode := 'UPDATE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while updateing status:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const deleteStatus = (req, res) => {
+  var query = `CALL usp_TaskStatusesCRUD(@p_status_id := ${req.query.status_id ? `'${req.query.status_id}'` : null},@p_status_name := 'Todo',@p_description := 'complete the task as soon as posable',@p_mode := 'DELETE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while getting taskstatuses:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const taskPriorities = (req, res) => {
+  var query = `CALL usp_TaskPrioritiesCRUD(@p_priority_id := 1,@p_priority_name := null,@p_description := null,@p_mode := 'READ');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while getting taskpriorities:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const createPrioritie = (req, res) => {
+  var query = `CALL usp_TaskPrioritiesCRUD(@p_priority_id := ${req.body.priority_id ? `'${req.body.priority_id}'` : null},@p_priority_name :=  ${req.body.priority_name ? `'${req.body.priority_name}'` : null},@p_description := ${req.body.description ? `'${req.body.description}'` : null},@p_mode := 'CREATE')`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while createing  prioritie:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const updatePrioritie = (req, res) => {
+  var query = `CALL usp_TaskPrioritiesCRUD(@p_priority_id := ${req.body.priority_id ? `'${req.body.priority_id}'` : null},@p_priority_name :=  ${req.body.priority_name ? `'${req.body.priority_name}'` : null},@p_description := ${req.body.description ? `'${req.body.description}'` : null},@p_mode :='UPDATE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while updateing prioritie:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
+
+const deletePrioritie = (req, res) => {
+  var query = `CALL usp_TaskPrioritiesCRUD(@p_priority_id :=${req.query.priority_id ? `'${req.query.priority_id}'` : null},@p_priority_name := null,@p_description := null,@p_mode := 'DELETE');`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while deleteing prioritie:${err}`)
+    }
+    else {
+      res.send(result);
+    }
+  })
+};
 
 
 const conversationsGet = (req, res) => {
@@ -352,6 +528,19 @@ module.exports = {
   createRole,
   updateRole,
   deleteRole,
+  tasks,
+  getAllTasksForDropdown,
+  createTask,
+  updateTask,
+  deleteTask,
+  taskStatuses,
+  createStatus,
+  updateStatus,
+  deleteStatus,
+  taskPriorities,
+  createPrioritie,
+  updatePrioritie,
+  deletePrioritie,
   conversationsGet,
   conversationInfoGet,
   conversationAdd,
