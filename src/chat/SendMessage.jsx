@@ -49,7 +49,7 @@ function SendMessage({ messageTemplate, userId }) {
       conversationid: selectedUser.conversation_id,
       senderid: loggedInUser.user_id,
       // receiverid: selectedUser.user_id,
-      contenttype: 'image',
+      contenttype: 'Image',
       content: path,
       parentmessageid,
       reactions,
@@ -92,15 +92,11 @@ function SendMessage({ messageTemplate, userId }) {
       "senderUserName": loggedInUser.username,
       "conversation_id": selectedUser.conversation_id,
       "receiverSocketID": GV.conversationMembers?.map(_ => _.user_id)?.map(cm => GV.users?.find(u => u.user_id == cm)?.socketID),
-    }, (status) => {
-      console.log(status);
-
-      // console.log('path1:' + path1);
+      "content_type": "Image"
+    }, (response) => {
+      handleSendFileClick(response.message.path);
     }
     );
-    const path1 = `https://indiausers.s3.ap-south-1.amazonaws.com/${files[0].name}`
-    // setPath(path1)
-    handleSendFileClick(path1)
   }
   return (<>
     <div className='align-self-end flex-column w-100'  >

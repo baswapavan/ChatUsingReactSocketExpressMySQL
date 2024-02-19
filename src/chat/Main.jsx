@@ -92,7 +92,7 @@ function Main(props) {
     });
 
     GV.thisSocket && GV.thisSocket.on("getMessage", (message, call_back) => {
-      //console.log(message);
+      console.log(message);
       setGV((prev) => { return { ...prev, messages: [...prev.messages, { ...message, isRead: false }] } });
       //setMessageList((prev) => [...prev, {...message, isRead:false}]);
       setNeedUpdate(n => !n);

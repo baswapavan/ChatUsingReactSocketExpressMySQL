@@ -203,9 +203,9 @@ function MessageList({ messageList, activeChat }) {
                       ? 'text-end '
                       : 'text-start'}
                 >
-                  {_.content_type == "Text" &&
-                    _.msg ? <span className="ps-2 pe-4 py-2 mw-50" style={_.senderUserName === loggedInUser.username ? { backgroundColor: '#eafade', borderRadius: '10px', lineHeight: '29px', overflowWrap: 'anywhere' } : { backgroundColor: '#dcdddb', borderRadius: '10px', lineHeight: '29px', overflowWrap: 'anywhere' }} > {_.msg} </span>
-                    : <img className="ps-2 pe-4 py-2 mw-50" src={_.msg || _.path} width='200px' alt="img"></img>
+                  {_.content_type == "Image" ?
+                    <img className="ps-2 pe-4 py-2 mw-50" src={_.msg || _.path} width='200px' alt="img"></img>
+                    : <span className="ps-2 pe-4 py-2 mw-50" style={_.senderUserName === loggedInUser.username ? { backgroundColor: '#eafade', borderRadius: '10px', lineHeight: '29px', overflowWrap: 'anywhere' } : { backgroundColor: '#dcdddb', borderRadius: '10px', lineHeight: '29px', overflowWrap: 'anywhere' }} > {_.msg} </span>
                   }
                   <div style={{ fontSize: '10px' }} className='pt-1 pb-3 ps-2 pe-2'><span style={{ fontStyle: 'italic', color: '#adadad' }}>{_.t}</span></div>
                 </div>
