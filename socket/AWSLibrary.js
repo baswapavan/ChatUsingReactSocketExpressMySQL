@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const fs = require('fs');
-const { awsKeys } = require('./config')
+const { awsKeys } = require('./config');
 // Set the region
 AWS.config.update({ region: 'ap-south-1' });
 
@@ -8,6 +8,7 @@ AWS.config.update({ region: 'ap-south-1' });
 const credentials = new AWS.Credentials({
   accessKeyId: awsKeys.accessKeyId,
   secretAccessKey: awsKeys.secretAccessKey
+
 });
 
 // Set the credentials
