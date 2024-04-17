@@ -21,6 +21,18 @@ function Statuses() {
         },
         (result) => {
           // setEditStatus('success');
+          // Update the prioritys array
+          setpriorities((prevPriority) => {
+            const updatedPriority = prevPriority.map(priority => {
+              if (priority.priority_id === result[0][0].priority_id) {
+                // Update the priority here
+                return result[0][0];
+              }
+              // If the priority ID doesn't match, return the original priority
+              return priority;
+            });
+            return updatedPriority;
+          });
         }
       );
     } catch (error) {
@@ -38,6 +50,14 @@ function Statuses() {
         },
         (result) => {
           // setEditStatus('success');
+          setpriorities((prevPriorities) => {
+            return [...prevPriorities, result[0][0]]
+          })
+          // Clear input field values
+          setNewPrioritie({
+            priority_name: '',
+            description: ''
+          });
         }
       );
     } catch (error) {
@@ -49,8 +69,14 @@ function Statuses() {
     const isConfirmed = window.confirm("Are you sure to delete the priority");
 
     if (isConfirmed) {
-      deletePrioritie({ priority_id: priority_id }, () => {
+      deletePrioritie({ priority_id: priority_id }, (result) => {
         // Handle deletion callback if needed
+        console.log(result)
+        setpriorities((prevPriorities) => {
+          const updatePrioritie = prevPriorities.filter(prioritie => (prioritie.priority_id != result[0][0].priority_id))
+          return updatePrioritie;
+        }
+        )
       });
     } else {
       // Handle cancellation if needed

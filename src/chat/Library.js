@@ -47,7 +47,7 @@ export const addChatUser = (socket, user) => {
   });
 };
 
-export const addUser = ({ loggedin_userid, username, password, email, fullname, profileImage, timezone, about, role }) => {
+export const addUser = ({ loggedin_userid, username, password, email, fullname, profile_picture, timezone, about, role }) => {
   fetch(APIServerURL + '/user', {
     method: 'POST'
     , body: JSON.stringify({
@@ -56,7 +56,7 @@ export const addUser = ({ loggedin_userid, username, password, email, fullname, 
       , 'password': password
       , 'email': email
       , 'full_name': fullname
-      , 'profileImage': profileImage
+      , 'profile_picture': profile_picture
       , 'time_zone': timezone
       , 'about': about
       , 'role_id': role
@@ -117,7 +117,7 @@ export const updateUser = ({ loggedin_userid, user_name, password, email, full_n
     }
   }).then(response => response.json())
     .then(json => {
-      call_back(json[0]);
+      call_back(json);
 
     })
 }
@@ -445,14 +445,30 @@ export const conversationWithMembersAdd = ({ name, creator_id, meta_data, profil
     }
   }).then(response => response.json())
     .then(json => {
-      // console.log('Library', json.slice(0, 2))
-      // call_back(json.slice(0, 2));
-      call_back(json.slice(0, 2));
+      call_back(json);
 
     })
 }
 
-export const conversationToDelete = ({ conversation_id }) => {
+export const updateConversation = ({ conversationid, name, metadata, profileimage }, call_back) => {
+  fetch(APIServerURL + '/conversation', {
+    method: 'PUT'
+    , body: JSON.stringify({
+      'conversation_id': conversationid
+      , 'name': name
+      , 'metadata': metadata
+      , 'profile_image': profileimage
+    })
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json);
+    })
+}
+
+export const conversationToDelete = ({ conversation_id }, call_back) => {
   fetch(APIServerURL + `/conversation/members/messages`, {
     method: 'DELETE'
     , body: JSON.stringify({
@@ -464,11 +480,11 @@ export const conversationToDelete = ({ conversation_id }) => {
   }).then(response => response.json())
     .then(json => {
       console.log(json);
-
+      call_back(json)
     })
 }
 
-export const conversationMemberAdd = ({ conversation_id, user_id, role, status, invite_by_user_id }) => {
+export const conversationMemberAdd = ({ conversation_id, user_id, role, status, invite_by_user_id }, call_back) => {
   fetch(APIServerURL + '/conversation/member', {
     method: 'POST'
     , body: JSON.stringify({
@@ -483,25 +499,58 @@ export const conversationMemberAdd = ({ conversation_id, user_id, role, status, 
     }
   }).then(response => response.json())
     .then(json => {
-      console.log(json);
-
+      call_back(json)
     })
 }
 
 
-export const conversationMemberDelete = ({ membership_id }) => {
-  fetch(APIServerURL + `/conversation/member?membership_id=${membership_id}`, {
+export const conversationMemberDelete = ({ membership_id, conversation_id }, call_back) => {
+  fetch(APIServerURL + `/conversation/member?membership_id=${membership_id}&conversation_id=${conversation_id}`, {
     method: 'DELETE'
     , body: JSON.stringify({
-
     })
     , headers: {
       "Content-Type": "application/json"
     }
   }).then(response => response.json())
     .then(json => {
-      console.log(json);
+      call_back(json);
+    })
+}
 
+export const conversationMessageDelete = ({ message_id }, call_back) => {
+  fetch(APIServerURL + `/conversation/message?message_id=${message_id}`, {
+    method: 'DELETE'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json)
+    })
+}
+
+export const userPerformance = ({ user_id, role_id, task_title, due_date_from, due_date_to, status_id, priority_id, parent_task_id, offset, limit }, call_back) => {
+  fetch(APIServerURL + `/user/performance?user_id=${user_id}&role_id=${role_id}&task_title=${task_title}&due_date_from=${due_date_from}&due_date_to=${due_date_to}&status_id=${status_id}&priority_id=${priority_id}&parent_task_id=${parent_task_id}&offset=${offset}&limit=${limit}`, {
+    method: 'GET'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json)
+    })
+}
+
+export const parentTasks = ({ parent_filter }, call_back) => {
+  fetch(APIServerURL + `/parent/tasks?parent_filter=${parent_filter}`, {
+    method: 'GET'
+    , headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json())
+    .then(json => {
+      call_back(json[0])
     })
 }
 

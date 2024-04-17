@@ -189,7 +189,7 @@ function TaskManagement({ selectedTask, handleUpdateTask, setNewTask, setSelecte
               onChange={(e) => setNewTask({ ...newTask, parent_task_id: e.target.value })}
               className='form-select m-2 p-2 my-3'
             >
-              <option value="" disabled select>Select The ParentTask</option>
+              <option select>Select The ParentTask</option>
               {getAllTasks && getAllTasks.map(_ => (
                 <option key={_.task_id} value={_.task_id}>{_.title}</option>
               ))

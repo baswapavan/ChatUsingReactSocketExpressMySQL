@@ -22,6 +22,18 @@ function Statuses() {
         },
         (result) => {
           // setEditStatus('success');
+          // Update the statuses array
+          setStatuses((prevStatuses) => {
+            const updatedStatuses = prevStatuses.map(status => {
+              if (status.status_id === result[0][0].status_id) {
+                // Update the role here
+                return result[0][0];
+              }
+              // If the role ID doesn't match, return the original role
+              return status;
+            });
+            return updatedStatuses;
+          });
         }
       );
     } catch (error) {
@@ -39,19 +51,29 @@ function Statuses() {
         },
         (result) => {
           // setEditStatus('success');
+          setStatuses((prevTaskStatuses) => {
+            return [...prevTaskStatuses, result[0][0]]
+          })
         }
       );
+      setNewStatus({ status_id: '', status_name: '', description: '' });
     } catch (error) {
       // setEditStatus('error');
     }
   };
 
+
   const handleStatusDelect = (status_id) => {
     const isConfirmed = window.confirm("Are you sure to delete the status");
 
     if (isConfirmed) {
-      deleteStatus({ status_id: status_id }, () => {
+      deleteStatus({ status_id: status_id }, (result) => {
         // Handle deletion callback if needed
+        console.log(result);
+        setStatuses((prevTaskStatuses) => {
+          const updateTaskStatus = prevTaskStatuses.filter(status => (status.status_id != result[0][0].status_id))
+          return updateTaskStatus;
+        })
       });
     } else {
       // Handle cancellation if needed

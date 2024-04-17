@@ -161,12 +161,12 @@ app.get('/conversation/nonmembers', (req, res) => {
   apis.conversationNonMembersGet(req, res);
 });
 
-
+/////
 app.put('/conversation', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.conversationUpdate(req, res);
 });
-
+/////////
 app.delete('/conversation', (req, res) => {
   console.log(JSON.stringify(req.body));
   apis.conversationDelete(req, res);
@@ -207,9 +207,19 @@ app.put('/conversation/messages', (req, res) => {
   apis.conversationMessagesUpdate(req, res);
 });
 
-app.delete('/conversation/messages', (req, res) => {
-  console.log(JSON.stringify(req.body));
-  apis.conversationMessagesDelete(req, res);
+app.delete('/conversation/message', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.conversationMessageDelete(req, res);
+});
+
+app.get('/user/performance', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.userPerformance(req, res);
+});
+
+app.get('/parent/tasks', (req, res) => {
+  console.log(JSON.stringify(req.query));
+  apis.parentTasks(req, res);
 });
 
 server.listen(3300, () => {

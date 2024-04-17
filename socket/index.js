@@ -3,7 +3,7 @@
 const { Server } = require("socket.io");
 const fs = require("fs");
 const { writeFile } = require("node:fs");
-const { addFile } = require("./AWSLibrary");
+const { addFile, deleteFile } = require("./AWSLibrary");
 // const socketServerURL = '';
 
 const io = new Server({
@@ -115,14 +115,8 @@ io.on("connection", (socket) => {
 
   socket.on("upload", (objImage, callback) => {
     console.log('In upload file');
-
-
     const timeStamp = Date.now();
-    const uniqueFileName = `${objImage.name}_${timeStamp}`
-
-
-
-
+    const uniqueFileName = `${objImage.name.split('.')[0]}_${timeStamp}.${objImage.name.split('.')[1]}`
     // save the content to the disk, for example
     writeFile(`../public/${uniqueFileName}`, objImage.data, (err) => {
 
@@ -131,7 +125,6 @@ io.on("connection", (socket) => {
         Bucket: 'indiausers',
         Key: uniqueFileName,
         Body: fs.createReadStream(`../public/${uniqueFileName}`),
-        ContentType: 'image/jpeg'
       };
       console.log("Test:" + objImage.name)
 
@@ -155,8 +148,15 @@ io.on("connection", (socket) => {
         objImage.receiverSocketID && io.to(objImage.receiverSocketID).emit('getMessage', { ...returnObjImage, t: getTimeStamp() });
 
         io.to(objImage.senderSocketID).emit('getMessage', { ...returnObjImage, t: getTimeStamp() });
+
+        //To keep S# bucket clean, Remove the old file
+        objImage.previous_file_name && deleteFile(objImage.previous_file_name);
       });
     });
+  });
+
+  socket.on("deleteFile", (objfile, callback) => {
+    objfile.filepath && deleteFile(objfile.filepath);
   });
 });
 io.listen(5000, (res) => {

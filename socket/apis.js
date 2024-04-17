@@ -31,7 +31,7 @@ const validateUser = (req, res) => {
 };
 
 const users = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.query.loggedin_userid}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}', @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_role_id:= '1',@p_is_active := '1', @p_mode := 'GET_ALL');`
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.query.loggedin_userid}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}',@p_profile_picture:='${req.body.profile_picture ? req.body.profile_picture : null}' , @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_role_id:= '1',@p_is_active := '1', @p_mode := 'GET_ALL');`
   console.log(query);
   con.query(query, (err, result) => {
     if (err) {
@@ -43,7 +43,7 @@ const users = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}', @p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_role_id := ${req.body.role_id ? req.body.role_id : null},@p_is_active := '1', @p_mode := 'CREATE');`
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := '${req.body.username}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}', @p_profile_picture := '${req.body.profile_picture}',@p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_role_id := ${req.body.role_id ? req.body.role_id : null},@p_is_active := '1', @p_mode := 'CREATE');`
   console.log(query);
   con.query(query, (err, result) => {
     if (err) {
@@ -55,7 +55,7 @@ const createUser = (req, res) => {
 };
 
 const updateUser = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := ${req.body.user_name ? `'${req.body.user_name}'` : null}, @p_password := ${req.body.password ? `'${req.body.password}'` : null}, @p_email := ${req.body.email ? `'${req.body.email}'` : null}, @p_full_name := ${req.body.full_name ? `'${req.body.full_name}'` : null}, @p_timezone := ${req.body.time_zone ? `'${req.body.time_zone}'` : null}, @p_about := ${req.body.about ? `'${req.body.about}'` : null}, @p_role_id := ${req.body.role_id ? req.body.role_id : null},@p_is_active := ${req.body.is_active ? `'${req.body.is_active}'` : null}, @p_mode := 'UPDATE');`;
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid ? req.body.loggedin_userid : null}, @p_username := ${req.body.user_name ? `'${req.body.user_name}'` : null}, @p_password := ${req.body.password ? `'${req.body.password}'` : null}, @p_email := ${req.body.email ? `'${req.body.email}'` : null}, @p_full_name := ${req.body.full_name ? `'${req.body.full_name}'` : null},@p_profile_picture:='${req.body.profile_picture ? req.body.profile_picture : null}' , @p_timezone := ${req.body.time_zone ? `'${req.body.time_zone}'` : null}, @p_about := ${req.body.about ? `'${req.body.about}'` : null}, @p_role_id := ${req.body.role_id ? req.body.role_id : null},@p_is_active := ${req.body.is_active ? `'${req.body.is_active}'` : null}, @p_mode := 'UPDATE');`;
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
@@ -67,7 +67,7 @@ const updateUser = (req, res) => {
 };
 
 const deleteUser = (req, res) => {
-  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid}, @p_username := '${req.body.user_name}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}',@p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_is_active := '1', @p_mode := 'DELETE');`
+  var query = `CALL usp_UserCRUD(@p_loggedin_userid := ${req.body.loggedin_userid}, @p_username := '${req.body.user_name}', @p_password := '${req.body.password}', @p_email := '${req.body.email}', @p_full_name := '${req.body.full_name}',@p_profile_picture:='${req.body.profile_picture ? req.body.profile_picture : null}' ,@p_timezone := '${req.body.time_zone}', @p_about := '${req.body.about}',@p_is_active := '1', @p_mode := 'DELETE');`
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
@@ -349,7 +349,7 @@ const conversationAdd = (req, res) => {
 
 const conversationWithMembersAdd = (req, res) => {
   var query = `CALL usp_ConversationWithMembersAdd(@p_conversation_id := null, @p_type := 'Group', @p_name := '${req.body.name ? req.body.name : null}', @p_creator_id := '${req.body.creator_id ? req.body.creator_id : null}', @p_member_count := '3',
-        @p_metadata :='${req.body.meta_data ? req.body.meta_data : null}', @p_settings := null, @p_profile_image :='${req.body.profile_image ? req.body.profile_image : null}',@p_users:='${req.body.users ? req.body.users : null}');`
+        @p_metadata :=${req.body.meta_data ? `'${req.body.meta_data}'` : null}, @p_settings := null, @p_profile_image :=${req.body.profile_image ? `'${req.body.profile_image}'` : null},@p_users:='${req.body.users ? req.body.users : null}');`
   console.log(query);
   con.query(query, (err, result) => {
     if (err) {
@@ -388,8 +388,7 @@ const conversationNonMembersGet = (req, res) => {
 
 
 const conversationUpdate = (req, res) => {
-  var query = `CALL usp_ConversationsCRUD(@p_conversation_id := '${req.body.conversation_id}', @type := '${req.body.type}',@p_name := '${req.body.name}',@p_creator_id := '${req.body.creator_id}',@p_member_count := '${req.body.member_count}' ,
-    @p_metadata := '${req.body.meta_data}',@p_settings := '${req.body.settings}',@p_profile_image := '${req.body.profile_image}',@p_mode :='UPDATE');`
+  var query = `CALL usp_ConversationsCRUD(@p_conversation_id := '${req.body.conversation_id}', @p_type := ${req.body.type ? `'${req.body.type}'` : null},@p_name := ${req.body.name ? `'${req.body.name}'` : null},@p_creator_id := ${req.body.creator_id ? `'${req.body.creator_id}'` : null},@p_member_count :=${req.body.member_count ? `'${req.body.member_count}'` : null} ,@p_metadata := ${req.body.metadata ? `'${req.body.metadata}'` : null},@p_settings := ${req.body.settings ? `'${req.body.settings}'` : null},@p_profile_image := ${req.body.profile_image ? `'${req.body.profile_image}'` : null},@p_mode :='UPDATE');`
   console.log(query)
   con.query(query, (err, result) => {
     if (err) {
@@ -444,7 +443,7 @@ const conversationMemberAdd = (req, res) => {
 
 
 const conversationMemberDelete = (req, res) => {
-  var query = `CALL usp_ConversationMembersCRUD(@p_membership_id:= ${req.query.membership_id},@p_conversation_id := '1',@p_user_id := '5',@p_role := 'Participant',@p_status :='Active',@p_unread_count := '0',
+  var query = `CALL usp_ConversationMembersCRUD(@p_membership_id:= ${req.query.membership_id},@p_conversation_id := ${req.query.conversation_id},@p_user_id := '5',@p_role := 'Participant',@p_status :='Active',@p_unread_count := '0',
     @p_notifications_enabled := '1', @p_block_status := 'Not Blocked',@p_invite_by_user_id := NULL,
     @p_read_receipts_enabled := '1',@p_participant_order := '1',@p_starred := '0',@p_mode := 'DELETE');`
   console.log(query)
@@ -518,6 +517,48 @@ const conversationMessagesDelete = (req, res) => {
   });
 };
 
+const conversationMessageDelete = (req, res) => {
+  var query = `CALL usp_ConversationMessageDelete(@p_message_id :=${req.query.message_id});`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while deleting conversation: ${err}`);
+    } else {
+      res.send(result);
+    }
+  })
+};
+
+const userPerformance = (req, res) => {
+  var query = `CALL usp_GetUserTasksDetails(@p_userid := ${req.query.user_id ? req.query.user_id
+    : null},@p_role_id:= ${req.query.role_id ? req.query.role_id : null},@p_task_title:= ${req.query.task_title ? `'${req.query.task_title}'` : null},@p_due_date_from:=${req.query.due_date_from ? `'${req.query.due_date_from}' ` : null},
+@p_due_date_to:= ${req.query.due_date_to ? `'${req.query.due_date_to}'` : null},@p_status_id:= ${req.query.status_id ? req.query.status_id : null},@p_priority_id:= ${req.query.priority_id ? req.query.priority_id : null},@p_parent_task_id:=${req.query.parent_task_id ? req.query.parent_task_id : null},@p_offset:=${req.query.offset ? req.query.offset : null},@p_limit:=${req.query.limit ? req.query.limit : null});`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while getting userPerfomanceData: ${err}`);
+    } else {
+      res.send(result);
+    }
+  })
+};
+
+
+const parentTasks = (req, res) => {
+  var query = `CALL usp_GetParentTasks(@p_parent_filter := ${req.query.parent_filter ? `'${req.query.parent_filter}'` : null});`
+  console.log(query)
+  con.query(query, (err, result) => {
+    if (err) {
+      res.send(`Error while deleting conversation: ${err}`);
+    } else {
+      res.send(result);
+    }
+  })
+};
+
+
+
+
 module.exports = {
   validateUser,
   users,
@@ -556,4 +597,7 @@ module.exports = {
   conversationMessagesCreate,
   conversationMessagesUpdate,
   conversationMessagesDelete,
+  conversationMessageDelete,
+  userPerformance,
+  parentTasks
 };

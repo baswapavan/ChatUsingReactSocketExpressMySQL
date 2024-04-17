@@ -25,15 +25,27 @@ function Roles() {
           role: selectedRole.role,
           description: selectedRole.description
         },
-        (result) => {
-          // setEditStatus('success');
+        (res) => {
+          // Update the rolesData array
+          setRolesData((prevRolesData) => {
+            const updatedRolesData = prevRolesData.map(role => {
+              if (role.role_id === res[0][0].role_id) {
+                // Update the role here
+                return res[0][0];
+              }
+              // If the role ID doesn't match, return the original role
+              return role;
+            });
+            return updatedRolesData;
+          });
         }
       );
     } catch (error) {
-      // setEditStatus('error');
-      console.log(error);
+      // Handle error
+      console.error('Error updating role:', error);
     }
   };
+
 
   const handleCreateRole = async (event) => {
     event.preventDefault();
@@ -44,7 +56,11 @@ function Roles() {
           description: newRole.description
         },
         (result) => {
-          // setEditStatus('success');
+          // Assuming 'result' contains the newly created role
+          setRolesData((prevRolesData) => {
+            // Append the newly created role to the existing rolesData array
+            return [...prevRolesData, result[0][0]];
+          });
         }
       );
     } catch (error) {
@@ -56,8 +72,14 @@ function Roles() {
     const isConfirmed = window.confirm("Are you sure to delete the role?");
 
     if (isConfirmed) {
-      deleteRole({ role_id: role_id }, () => {
+      deleteRole({ role_id: role_id }, (result) => {
         // Handle deletion callback if needed
+        console.log(result)
+        setRolesData((prevRolesData) => {
+          // Filter out the newly created role from the prevRolesData array
+          const updatedRolesData = prevRolesData.filter(role => role.role_id !== result[0][0].role_id);
+          return updatedRolesData;
+        });
       });
     } else {
       // Handle cancellation if needed

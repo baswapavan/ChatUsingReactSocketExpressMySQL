@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { addUser, roles } from './Library';
+import { GVContext } from './Login';
+
+
 
 
 function SignUp(props) {
@@ -14,7 +17,10 @@ function SignUp(props) {
   const [about, setAbout] = useState('');
   const [role, setRole] = useState('');
   const [createNewUser, setCreateNewUser] = useState(null);
-  const [rolesDataIn, setRolesDataIn] = useState()
+  const [rolesDataIn, setRolesDataIn] = useState();
+  const { GV, setGV } = useContext(GVContext);
+  const { thisSocket } = GV;
+
 
 
   useEffect(() => {
@@ -22,9 +28,24 @@ function SignUp(props) {
       setLoggedin_Userid(props.loggedInUser.user_id);
   }, []);
 
-  const handleSignUp = () => {
+  function upload(files) {
+    thisSocket.emit("upload", {
+      data: files[0],
+      name: files[0].name,
+    }, (response) => {
+      if (response) {
+        setProfileImage(response.message.path);
+      } else {
+        // Handle upload failure
+        console.error("Failed to upload image:", response.error);
+      }
+    });
+  }
+
+  const handleSignUp = async () => {
+    //socket.emit("upload", object, (result)=>{})
     try {
-      addUser({ loggedin_userid, username, password, email, fullname, profileImage, timezone, about, role })
+      await addUser({ loggedin_userid, username, password, email, fullname, profile_picture: profileImage, timezone, about, role })
       setCreateNewUser('success');
 
     }
@@ -32,6 +53,21 @@ function SignUp(props) {
       setCreateNewUser('success');
     }
   }
+
+  // const handleSignUp = () => {
+  //   socket.emit("upload", object, (result) => {
+
+  //     try {
+  //       addUser({ loggedin_userid, username, password, email, fullname, profileImage: result["path"], timezone, about, role })
+  //       setCreateNewUser('success');
+
+  //     }
+  //     catch (error) {
+  //       setCreateNewUser('success');
+  //     }
+  //   })
+
+  // }
 
   // const handleRolesGet = () => {
   //   roles((roles) => {
@@ -60,8 +96,8 @@ function SignUp(props) {
               onChange={(e) => setEmail(e.target.value)} className='form-control m-2 p-2' placeholder='Email'></input>
             <input type="text" value={fullname}
               onChange={(e) => setFullname(e.target.value)} className='form-control m-2 p-2' placeholder='Full name'></input>
-            <input type="file" value={profileImage}
-              onChange={(e) => setProfileImage(e.target.value)} className='form-control m-2 p-2' placeholder='Profile image'></input>
+            <input type="file"
+              onChange={(e) => upload(e.target.files)} className='form-control m-2 p-2' placeholder='Profile image'></input>
             <input type="text" value={timezone}
               onChange={(e) => setTimezone(e.target.value)} className='form-control m-2 p-2' placeholder='Time zone'></input>
             <input type="text" value={about}

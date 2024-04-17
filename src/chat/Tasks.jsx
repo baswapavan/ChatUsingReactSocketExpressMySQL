@@ -17,7 +17,7 @@ function Tasks(props) {
   const [priorities, setPriorities] = useState([]);
   const [getAllTasks, setGetAllTasks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(3); // Change page size as needed
+  const [pageSize] = useState(10); // Change page size as needed
 
 
 
@@ -52,7 +52,11 @@ function Tasks(props) {
 
   const handleCreateTask = async (e) => {
     await createTask({ title: newTask.title, description: newTask.description, created_by: GV.loggedInUser.user_id, assigned_to: newTask.assigned_to, due_date: newTask.due_date, status_id: newTask.status_id, priority_id: newTask.priority_id, parent_task_id: newTask.parent_task_id },
-      (json) => {
+      (result) => {
+        console.log(result)
+        setTasksData((prevTasks) => {
+          return [result[0][0], ...prevTasks]
+        })
       }
     )
   }
@@ -69,7 +73,21 @@ function Tasks(props) {
       priority_id: selectedTask.priority_id,
       parent_task_id: selectedTask.parent_task_id
     },
-      (json) => {
+      (result) => {
+        console.log(result);
+        // Update the Tasks array
+        setTasksData((prevTasks) => {
+          const updatedTask = prevTasks.map(task => {
+            if (task.task_id === result[0][0].task_id) {
+              // Update the priority here
+              return result[0][0];
+            }
+            // If the priority ID doesn't match, return the original priority
+            return task;
+          });
+          return updatedTask;
+        });
+
       })
   }
 
@@ -83,6 +101,12 @@ function Tasks(props) {
     if (ifConformed) {
       deleteTask({ task_id: taskId }, (res) => {
         // Handle deletion callback if needed
+        console.log(res)
+        setTasksData((prevTask) => {
+          const updatedTasks = prevTask.filter(task => (
+            task.task_id !== res[0][0].task_id))
+          return updatedTasks
+        })
       });
     }
     else {

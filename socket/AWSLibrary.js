@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const { awsKeys } = require('./config');
+const { URL } = require('url');
 // Set the region
 AWS.config.update({ region: 'ap-south-1' });
 
@@ -31,6 +32,30 @@ function addFile(params, call_back) {
   });
 }
 
+function deleteFile(filename) {
+  console.log('filename', filename);
+  const parsedUrl = new URL(filename);
+  let previous_file_name = parsedUrl.pathname;
+  previous_file_name = previous_file_name.substring(1);
+  console.log(previous_file_name);
+  const params = {
+    Bucket: 'indiausers',
+    Key: previous_file_name
+  };
+
+  s3.deleteObject(params, (err, data) => {
+    if (err) {
+      console.error('Error deleting file:', err);
+      return res.status(500).send('Error deleting file');
+    }
+    console.log('File deleted successfully');
+    //res.send('File deleted successfully');
+  });
+
+}
+
+
+
 module.exports = {
-  addFile
+  addFile, deleteFile
 };
